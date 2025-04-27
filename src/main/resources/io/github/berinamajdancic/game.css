@@ -3,4 +3,12 @@
     -fx-background-size: cover;
     -fx-background-position: center;
     -fx-background-repeat: no-repeat;
+    -fx-width: 100%;
+    -fx-height: 100%;
+}
+
+.spaceship {
+    -fx-width: 144px;
+    -fx-height: 144px;
+
 }

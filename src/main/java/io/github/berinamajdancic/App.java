@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -15,39 +16,44 @@ import java.io.IOException;
  */
 public class App extends Application {
 
-    private static Scene scene;
+    private static Stage primaryStage; // Store the primary stage
+    private static Parent gameRoot;
+    private static Game game;
 
     @Override
     public void start(Stage stage) throws IOException {
-        scene = new Scene(loadFXML("main_menu"), 640, 480);
-        stage.setScene(scene);
+        primaryStage = stage;
+
+        game = new Game(); // Initialize the game instance
+        App.setRoot("main_menu"); // Set the initial root to main menu
+        stage.setScene(game.getScene());
         stage.setFullScreen(true);
         stage.setFullScreenExitHint("");
         stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH); // Disable full-screen exit
-                                                                        // key
         stage.setTitle("Space Shooter");
+        // key
+        game.start();
         stage.show();
     }
 
-    static void setRoot(String fxml) throws IOException {
-        scene.setRoot(loadFXML(fxml));
-    }
-
-    private static Parent gameRoot;
-
-    private static Parent loadFXML(String fxml) throws IOException {
+    public static void setRoot(String fxml) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
-        Parent root = fxmlLoader.load();
+        Pane root = fxmlLoader.load();
+
+        // Store the game root if switching to the game screen
         if (fxml.equals("game")) {
             gameRoot = root;
-            GameController controller = fxmlLoader.getController();
-            controller.setScene(scene);
         }
-        return root;
+
+        Game.setRoot(root); // Set the new root on the existing scene
     }
 
     public static Parent getGameRoot() {
         return gameRoot;
+    }
+
+    public static Stage getPrimaryStage() {
+        return primaryStage;
     }
 
     public static void main(String[] args) {
