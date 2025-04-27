@@ -16,22 +16,24 @@ import java.io.IOException;
  */
 public class App extends Application {
 
-    private static Stage primaryStage; // Store the primary stage
+    private static Stage primaryStage;
     private static Parent gameRoot;
     private static Game game;
 
     @Override
     public void start(Stage stage) throws IOException {
+        GameController gameController = new GameController();
         primaryStage = stage;
 
-        game = new Game(); // Initialize the game instance
-        App.setRoot("main_menu"); // Set the initial root to main menu
+        game = new Game();
+        App.setRoot("main_menu");
         stage.setScene(game.getScene());
         stage.setFullScreen(true);
         stage.setFullScreenExitHint("");
-        stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH); // Disable full-screen exit
+        stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
         stage.setTitle("Space Shooter");
         // key
+        gameController.setScene(game.getScene());
         game.start();
         stage.show();
     }
@@ -39,13 +41,10 @@ public class App extends Application {
     public static void setRoot(String fxml) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
         Pane root = fxmlLoader.load();
-
-        // Store the game root if switching to the game screen
         if (fxml.equals("game")) {
             gameRoot = root;
         }
-
-        Game.setRoot(root); // Set the new root on the existing scene
+        Game.setRoot(root);
     }
 
     public static Parent getGameRoot() {

@@ -7,6 +7,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.image.ImageView;
 
 public class Game {
     private Player player;
@@ -18,7 +19,7 @@ public class Game {
         player = new Player();
         gameRoot = new Pane();
         scene = new Scene(gameRoot, 640, 480);
-        gameRoot.getChildren().add(player);
+
     }
 
     public static void setRoot(Pane newRoot) {
@@ -44,5 +45,9 @@ public class Game {
 
     public Scene getScene() {
         return scene;
+    }
+
+    public static Pane getGameRoot() {
+        return gameRoot;
     }
 }

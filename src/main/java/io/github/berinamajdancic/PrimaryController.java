@@ -13,6 +13,6 @@ public class PrimaryController {
 
     @FXML
     private void exitApplication() {
-        Platform.exit(); // Closes the application
+        Platform.exit();
     }
 }
