@@ -1,39 +1,25 @@
 package io.github.berinamajdancic;
 
-import javafx.scene.image.Image;
+import io.github.berinamajdancic.controllers.GameController;
+
 import java.io.IOException;
 import javafx.animation.AnimationTimer;
-import javafx.scene.layout.Pane;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
 
 public class Game {
-    private Player player;
-    private static Scene scene;
-    private static Pane gameRoot;
     private AnimationTimer gameLoop;
+    GameController gameController;
 
-    public Game() {
-        player = new Player();
-        gameRoot = new Pane();
-        scene = new Scene(gameRoot, 640, 480);
-
-    }
-
-    public static void setRoot(Pane newRoot) {
-        gameRoot = newRoot;
-        scene.setRoot(newRoot); // Update the Scene's root
-        // setupInputHandling(); // Reattach input handlers to new scene
+    public Game(Stage stage) throws IOException {
+        App.getGameRoot().getChildren().clear();
+        gameController = new GameController(stage);
     }
 
     private void SetupGameLoop() {
         gameLoop = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                // Update game state and render
-                player.update();
+                gameController.update();
             }
         };
     }
@@ -43,11 +29,4 @@ public class Game {
         gameLoop.start();
     }
 
-    public Scene getScene() {
-        return scene;
-    }
-
-    public static Pane getGameRoot() {
-        return gameRoot;
-    }
 }
