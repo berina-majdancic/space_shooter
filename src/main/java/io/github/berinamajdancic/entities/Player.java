@@ -8,6 +8,7 @@ public class Player {
     private double speed = 10.0;
     private Image shipImage;
     private ImageView shipView;
+    privat double x=0,y=0;
 
     public Player() {
         setupImageView();
@@ -30,5 +31,13 @@ public class Player {
         shipView.setFitHeight(50);
         shipView.setX(100);
         shipView.setY(100);
+    }
+    public void move(double dx,double dy)
+    {
+        x+=dx;
+        y+=dy;
+        shipView.setLayoutX(x);
+        shipView.setLayoutY(y);
+
     }
 }
