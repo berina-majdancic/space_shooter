@@ -1,24 +1,25 @@
 package io.github.berinamajdancic.entities;
 
-import javafx.scene.image.ImageView;
 import java.io.InputStream;
+
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 public class Player {
     private double speed = 10.0;
     private Image shipImage;
     private ImageView shipView;
-    privat double x=0,y=0;
+    private double x=100,y=100;
 
     public Player() {
         setupImageView();
     }
 
     public void update() {
-
     }
 
     public ImageView getShipView() {
+        System.out.println("SHipView Exists");
         return shipView;
     }
 
@@ -29,15 +30,13 @@ public class Player {
         shipView = new ImageView(shipImage);
         shipView.setFitWidth(50);
         shipView.setFitHeight(50);
-        shipView.setX(100);
-        shipView.setY(100);
     }
     public void move(double dx,double dy)
     {
         x+=dx;
         y+=dy;
-        shipView.setLayoutX(x);
-        shipView.setLayoutY(y);
+        shipView.setTranslateX(x);
+        shipView.setTranslateY(y);
 
     }
 }

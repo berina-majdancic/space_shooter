@@ -1,14 +1,14 @@
 package io.github.berinamajdancic;
 
+import java.io.IOException;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-
-import java.io.IOException;
 
 /**
  * JavaFX App
@@ -39,8 +39,8 @@ public class App extends Application {
         primaryStage.setScene(scene);
     }
 
-    public static Pane getGameRoot() {
-        return gameRoot;
+    public static Parent getGameRoot() {
+        return primaryStage.getScene().getRoot();
     }
 
     private void setupStage(Stage stage) {
