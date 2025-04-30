@@ -28,6 +28,9 @@ public class App extends Application {
     }
 
     private void showMainMenu() throws IOException {
+        gameRoot = new Pane();
+        scene = new Scene(gameRoot);
+        primaryStage.setScene(scene);
         setRoot("ui/main_menu");
         primaryStage.show();
     }
@@ -35,8 +38,7 @@ public class App extends Application {
     public static void setRoot(String fxml) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
         gameRoot = fxmlLoader.load();
-        scene = new Scene(gameRoot);
-        primaryStage.setScene(scene);
+        primaryStage.getScene().setRoot(gameRoot);
     }
 
     public static Parent getGameRoot() {
@@ -53,6 +55,19 @@ public class App extends Application {
     public static void startGame() throws IOException {
         game = new Game(primaryStage);
         game.start();
+    }
+
+    public static void showPauseMenu() throws IOException {
+        try {
+            App.setRoot("ui/pause_menu");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void resumeGame() throws IOException {
+        game.resumeGame();
     }
 
     public static void main(String[] args) {

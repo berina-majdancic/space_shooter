@@ -9,17 +9,23 @@ import io.github.berinamajdancic.entities.Player;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 public class GameController {
-    private final Set<KeyCode> activeKeys= new HashSet<>();
-        private Player player;
-        private double movementSpeed=300;    private double spaceshipSpeed = 20.0;
-        private double deltaTime=0, currentTime=0, lastUpdateTime=0;
+    private final Set<KeyCode> activeKeys = new HashSet<>();
+    private final Player player;
+    private final double movementSpeed = 300;
+    private final double spaceshipSpeed = 20.0;
+    private final Stage stage;
+    private double deltaTime = 0, lastUpdateTime = 0;
 
     public GameController(Stage stage) throws IOException {
         player = new Player();
+        this.stage = stage;
+        setupGame();
+    }
+
+    public void setupGame() {
         ((Group) App.getGameRoot()).getChildren().add(player.getShipView());
         stage.show();
         App.getGameRoot().requestFocus();
@@ -29,47 +35,44 @@ public class GameController {
     public void update() {
         player.update();
         handleContinuousMovement();
+        handleInstantActions();
         updateDeltaTime();
 
     }
-    public void setupInputHandlers(Scene scene)
-    {
-        scene.setOnKeyPressed(e->{
+
+    public void setupInputHandlers(Scene scene) {
+        scene.setOnKeyPressed(e -> {
             activeKeys.add(e.getCode());
         });
-        scene.setOnKeyReleased(e->activeKeys.remove(e.getCode()));
+        scene.setOnKeyReleased(e -> activeKeys.remove(e.getCode()));
     }
 
-    private void handleInstantActions()
-    {
+    private void handleInstantActions() {
+        if (activeKeys.contains(KeyCode.ESCAPE)) {
+            try {
+                App.showPauseMenu();
+            } catch (IOException e) {
+                e.printStackTrace();
 
-    }
-    private void handleContinuousMovement()
-    {
-        double dx=0, dy=0;
-        if(activeKeys.contains(KeyCode.A) || activeKeys.contains(KeyCode.LEFT)) dx-=movementSpeed*deltaTime;
-        if(activeKeys.contains(KeyCode.D) || activeKeys.contains(KeyCode.RIGHT)) dx+=movementSpeed*deltaTime;
-        if(activeKeys.contains(KeyCode.W)|| activeKeys.contains(KeyCode.UP)) dy-=movementSpeed* deltaTime;
-        if(activeKeys.contains(KeyCode.S)|| activeKeys.contains(KeyCode.DOWN)) dy+=movementSpeed*deltaTime;
-        
-        player.move(dx, dy );
-
-    }
-
-    private void handleKeyPress(KeyEvent event) {
-        switch (event.getCode()) {
-            case ESCAPE:
-                try {
-                    App.setRoot("ui/main_menu");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                event.consume();
-                break;
-            default:
-                break;
+            }
         }
     }
+
+    private void handleContinuousMovement() {
+        double dx = 0, dy = 0;
+        if (activeKeys.contains(KeyCode.A) || activeKeys.contains(KeyCode.LEFT))
+            dx -= movementSpeed * deltaTime;
+        if (activeKeys.contains(KeyCode.D) || activeKeys.contains(KeyCode.RIGHT))
+            dx += movementSpeed * deltaTime;
+        if (activeKeys.contains(KeyCode.W) || activeKeys.contains(KeyCode.UP))
+            dy -= movementSpeed * deltaTime;
+        if (activeKeys.contains(KeyCode.S) || activeKeys.contains(KeyCode.DOWN))
+            dy += movementSpeed * deltaTime;
+
+        player.move(dx, dy);
+
+    }
+
     private void updateDeltaTime() {
         long currentTime = System.nanoTime();
         deltaTime = (currentTime - lastUpdateTime) / 1_000_000_000.0;

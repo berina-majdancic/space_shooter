@@ -12,13 +12,15 @@ import javafx.stage.Stage;
 
 public class Game {
     private AnimationTimer gameLoop;
-    Parent root;
     GameController gameController;
+    private static Stage stage;
+    private Parent root;
     private Image backgroundImage;
     private ImageView backgroundImageView;
 
     public Game(Stage stage) throws IOException {
-        Parent root = new Group();
+        this.stage = stage;
+        root = new Group();
         stage.getScene().setRoot(root);
         gameController = new GameController(stage);
         setupGame();
@@ -34,14 +36,28 @@ public class Game {
     }
 
     private void setupGame() {
-       backgroundImage=new Image(getClass().getResourceAsStream("images/stars_background.jpg"));
-         backgroundImageView=new ImageView(backgroundImage);
-         if(backgroundImageView.getImage() != null) {
-                backgroundImageView.setFitWidth(1920);
-                backgroundImageView.setFitHeight(1080);
-             ((Group)App.getGameRoot()).getChildren().add(backgroundImageView);
-         }
+        backgroundImage = new Image(getClass().getResourceAsStream("images/stars_background.jpg"));
+        backgroundImageView = new ImageView(backgroundImage);
+        if (backgroundImageView.getImage() != null) {
+            backgroundImageView.setFitWidth(1920);
+            backgroundImageView.setFitHeight(1080);
+            ((Group) App.getGameRoot()).getChildren().add(backgroundImageView);
+        }
     }
+
+    public void showPauseMenu() {
+        try {
+            App.showPauseMenu();
+
+        } catch (Exception e) {
+        }
+    }
+
+    public void resumeGame() {
+        stage.getScene().setRoot(root);
+        start();
+    }
+
     public void start() {
         SetupGameLoop();
         gameLoop.start();
