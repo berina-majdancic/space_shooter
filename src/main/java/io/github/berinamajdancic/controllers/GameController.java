@@ -47,10 +47,10 @@ public class GameController {
     private void handleContinuousMovement()
     {
         double dx=0, dy=0;
-        if(activeKeys.contains(KeyCode.A)) dx-=movementSpeed*deltaTime;
-        if(activeKeys.contains(KeyCode.D)) dx+=movementSpeed*deltaTime;
-        if(activeKeys.contains(KeyCode.W)) dy-=movementSpeed* deltaTime;
-        if(activeKeys.contains(KeyCode.S)) dy+=movementSpeed*deltaTime;
+        if(activeKeys.contains(KeyCode.A) || activeKeys.contains(KeyCode.LEFT)) dx-=movementSpeed*deltaTime;
+        if(activeKeys.contains(KeyCode.D) || activeKeys.contains(KeyCode.RIGHT)) dx+=movementSpeed*deltaTime;
+        if(activeKeys.contains(KeyCode.W)|| activeKeys.contains(KeyCode.UP)) dy-=movementSpeed* deltaTime;
+        if(activeKeys.contains(KeyCode.S)|| activeKeys.contains(KeyCode.DOWN)) dy+=movementSpeed*deltaTime;
         
         player.move(dx, dy );
 

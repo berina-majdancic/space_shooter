@@ -23,12 +23,12 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         primaryStage = stage;
+        setupStage();
         showMainMenu();
     }
 
     private void showMainMenu() throws IOException {
         setRoot("ui/main_menu");
-        setupStage(primaryStage);
         primaryStage.show();
     }
 
@@ -43,11 +43,11 @@ public class App extends Application {
         return primaryStage.getScene().getRoot();
     }
 
-    private void setupStage(Stage stage) {
-        stage.setTitle("Space Shooter");
-        stage.setFullScreen(true);
-        stage.setFullScreenExitHint("");
-        stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+    private void setupStage() {
+        primaryStage.setTitle("Space Shooter");
+        primaryStage.setFullScreen(true);
+        primaryStage.setFullScreenExitHint("");
+        primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
     }
 
     public static void startGame() throws IOException {

@@ -10,6 +10,7 @@ public class Player {
     private Image shipImage;
     private ImageView shipView;
     private double x=100,y=100;
+    private final double width=100,height=100;
 
     public Player() {
         setupImageView();
@@ -28,8 +29,8 @@ public class Player {
                 getClass().getResourceAsStream("/io/github/berinamajdancic/images/spaceship.png");
         shipImage = new Image(inputStream);
         shipView = new ImageView(shipImage);
-        shipView.setFitWidth(50);
-        shipView.setFitHeight(50);
+        shipView.setFitWidth(width);
+        shipView.setFitHeight(height);
     }
     public void move(double dx,double dy)
     {
