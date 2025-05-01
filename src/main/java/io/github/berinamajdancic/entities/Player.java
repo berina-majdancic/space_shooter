@@ -61,7 +61,7 @@ public class Player {
     public void shoot() {
         long currentTime = System.nanoTime();
         if (currentTime - lastShotTime >= fireRate) {
-            Projectile projectile = new Projectile(x + width / 2, y);
+            Projectile projectile = new Projectile(x + width / 2, y, 30);
             projectiles.add(projectile);
             lastShotTime = currentTime;
         }
@@ -81,6 +81,10 @@ public class Player {
             }
         }
 
+    }
+
+    public LinkedList<Projectile> getProjectiles() {
+        return projectiles;
     }
 
 }

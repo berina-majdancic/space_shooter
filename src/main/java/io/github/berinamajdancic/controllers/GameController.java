@@ -11,11 +11,12 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
+import io.github.berinamajdancic.entities.Projectile;
 
 public class GameController {
     private final Set<KeyCode> activeKeys = new HashSet<>();
     private final Player player;
-    private final Enemy enemy;
+    private Enemy enemy;
     private final double movementSpeed = 300;
     private final Stage stage;
     private static double deltaTime = 0;
@@ -41,7 +42,7 @@ public class GameController {
         handleContinuousMovement();
         handleInstantActions();
         updateDeltaTime();
-
+        checkCollisions();
     }
 
     public void setupInputHandlers(Scene scene) {
@@ -87,5 +88,23 @@ public class GameController {
 
     public static double getDeltaTime() {
         return deltaTime;
+    }
+
+    private void checkCollisions() {
+        if (enemy != null) {
+
+            for (Projectile projectile : player.getProjectiles()) {
+                if (projectile.getProjectileView().getBoundsInParent()
+                        .intersects(enemy.getShipView().getBoundsInParent())) {
+                    enemy.takeDamage(projectile.getDamage());
+                    projectile.setOutOfBounds(true);
+                    if (enemy.isDead()) {
+                        enemy = null;
+
+                    }
+                }
+            }
+        }
+
     }
 }

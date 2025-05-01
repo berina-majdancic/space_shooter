@@ -10,13 +10,23 @@ public class Projectile {
     private double x, y;
     private final double radius = 10;
     private boolean outOfBounds;
+    private final int damage;
     Circle bullet;
 
-    public Projectile(double x, double y) {
+    public Projectile(double x, double y, int damage) {
         bullet = new Circle(radius / 2);
         this.x = x;
         this.y = y;
+        this.damage = damage;
         setupView();
+    }
+
+    public int getDamage() {
+        return damage;
+    }
+
+    public void setOutOfBounds(boolean outOfBounds) {
+        this.outOfBounds = outOfBounds;
     }
 
     public void update() {

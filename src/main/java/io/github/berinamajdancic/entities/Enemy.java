@@ -1,7 +1,9 @@
 package io.github.berinamajdancic.entities;
 
+import io.github.berinamajdancic.App;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.Group;
 
 public class Enemy {
 
@@ -14,6 +16,18 @@ public class Enemy {
 
     public Enemy() {
         setupImageView();
+    }
+
+    public boolean isDead() {
+        return health < 0;
+    }
+
+    public void takeDamage(int damage) {
+        health -= damage;
+        if (health <= 0) {
+            ((Group) App.getGameRoot()).getChildren().remove(shipView);
+
+        }
     }
 
     public void update() {
