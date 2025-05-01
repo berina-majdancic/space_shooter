@@ -4,36 +4,29 @@ import java.io.InputStream;
 import java.util.LinkedList;
 
 import io.github.berinamajdancic.App;
+import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.Group;
 
 public class Player {
-    private double speed = 10.0;
+    private final double width = 100, height = 100;
+    private final double fireRate = 100_000_000;
+    private final double speed = 3.0;
     private Image shipImage;
     private ImageView shipView;
     private double x = 100, y = 100;
-    private final double width = 100, height = 100;
+    private long lastShotTime = 0;
+
     LinkedList<Projectile> projectiles;
 
     public Player() {
-        projectiles = new LinkedList<Projectile>();
+        projectiles = new LinkedList<>();
         setupImageView();
     }
 
     public void update() {
-        if (!projectiles.isEmpty()) {
-            projectiles.removeIf(projectile -> {
-                if (projectile.outOfBounds()) {
-                    ((Group) App.getGameRoot()).getChildren().remove(projectile.getProjectileView());
-                    return true;
-                }
-                return false;
-            });
-            for (Projectile projectile : projectiles) {
-                projectile.update();
-            }
-        }
+        updateProjectiles();
+
     }
 
     public ImageView getShipView() {
@@ -52,15 +45,42 @@ public class Player {
     }
 
     public void move(double dx, double dy) {
-        x += dx;
-        y += dy;
+        if (x + dx < 0 || x + width + dx > ((Group) App.getGameRoot()).getScene().getWidth()) {
+            dx = 0;
+        }
+        if (y + dy < 0 && y + height + dy > ((Group) App.getGameRoot()).getScene().getHeight()) {
+            dy = 0;
+        }
+        x += dx * speed;
+        y += dy * speed;
         shipView.setTranslateX(x);
         shipView.setTranslateY(y);
 
     }
 
     public void shoot() {
-        Projectile projectile = new Projectile(x + width / 2, y);
-        projectiles.add(projectile);
+        long currentTime = System.nanoTime();
+        if (currentTime - lastShotTime >= fireRate) {
+            Projectile projectile = new Projectile(x + width / 2, y);
+            projectiles.add(projectile);
+            lastShotTime = currentTime;
+        }
     }
+
+    private void updateProjectiles() {
+        if (!projectiles.isEmpty()) {
+            projectiles.removeIf(projectile -> {
+                if (projectile.outOfBounds()) {
+                    ((Group) App.getGameRoot()).getChildren().remove(projectile.getProjectileView());
+                    return true;
+                }
+                return false;
+            });
+            for (Projectile projectile : projectiles) {
+                projectile.update();
+            }
+        }
+
+    }
+
 }

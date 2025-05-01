@@ -8,6 +8,7 @@ public class Enemy {
     private double speed = 10.0;
     private Image shipImage;
     private ImageView shipView;
+    private int health = 100;
     private double x = 400, y = 400;
     private final double width = 100, height = 100;
 

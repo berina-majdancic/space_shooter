@@ -22,7 +22,7 @@ public class Projectile {
     public void update() {
         y -= speed * GameController.getDeltaTime();
         bullet.setTranslateY(y);
-        if (y < 0)
+        if (y < 0 || y > ((Group) App.getGameRoot()).getScene().getHeight())
             outOfBounds = true;
     }
 

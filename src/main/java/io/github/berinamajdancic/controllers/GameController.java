@@ -17,7 +17,6 @@ public class GameController {
     private final Player player;
     private final Enemy enemy;
     private final double movementSpeed = 300;
-    private final double spaceshipSpeed = 20.0;
     private final Stage stage;
     private static double deltaTime = 0;
     private double lastUpdateTime = 0;
