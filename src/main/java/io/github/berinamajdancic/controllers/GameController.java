@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import io.github.berinamajdancic.App;
+import io.github.berinamajdancic.DatabaseManager;
 import io.github.berinamajdancic.entities.Enemy;
 import io.github.berinamajdancic.entities.Player;
 import javafx.scene.Group;
@@ -21,8 +22,10 @@ public class GameController {
     private final Stage stage;
     private static double deltaTime = 0;
     private double lastUpdateTime = 0;
+    private DatabaseManager databaseManager;
 
     public GameController(Stage stage) throws IOException {
+        databaseManager = new DatabaseManager();
         player = new Player();
         enemy = new Enemy();
         this.stage = stage;
@@ -91,20 +94,21 @@ public class GameController {
     }
 
     private void checkCollisions() {
-        if (enemy != null) {
 
-            for (Projectile projectile : player.getProjectiles()) {
+        for (Projectile projectile : player.getProjectiles()) {
+            if (enemy != null) {
                 if (projectile.getProjectileView().getBoundsInParent()
                         .intersects(enemy.getShipView().getBoundsInParent())) {
                     enemy.takeDamage(projectile.getDamage());
                     projectile.setOutOfBounds(true);
                     if (enemy.isDead()) {
                         enemy = null;
-
+                        player.addScore(100);
+                        databaseManager.saveScore("playe1", 100);
                     }
                 }
             }
         }
-
     }
+
 }

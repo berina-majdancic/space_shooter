@@ -16,6 +16,7 @@ public class Player {
     private ImageView shipView;
     private double x = 100, y = 100;
     private long lastShotTime = 0;
+    private int score = 0;
 
     LinkedList<Projectile> projectiles;
 
@@ -85,6 +86,14 @@ public class Player {
 
     public LinkedList<Projectile> getProjectiles() {
         return projectiles;
+    }
+
+    public void addScore(int score) {
+        this.score += score;
+    }
+
+    public int getScore() {
+        return score;
     }
 
 }
