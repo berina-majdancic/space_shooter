@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import io.github.berinamajdancic.App;
+import io.github.berinamajdancic.entities.Enemy;
 import io.github.berinamajdancic.entities.Player;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -14,19 +15,23 @@ import javafx.stage.Stage;
 public class GameController {
     private final Set<KeyCode> activeKeys = new HashSet<>();
     private final Player player;
+    private final Enemy enemy;
     private final double movementSpeed = 300;
     private final double spaceshipSpeed = 20.0;
     private final Stage stage;
-    private double deltaTime = 0, lastUpdateTime = 0;
+    private static double deltaTime = 0;
+    private double lastUpdateTime = 0;
 
     public GameController(Stage stage) throws IOException {
         player = new Player();
+        enemy = new Enemy();
         this.stage = stage;
         setupGame();
     }
 
-    public void setupGame() {
+    private void setupGame() {
         ((Group) App.getGameRoot()).getChildren().add(player.getShipView());
+        ((Group) App.getGameRoot()).getChildren().add(enemy.getShipView());
         stage.show();
         App.getGameRoot().requestFocus();
         setupInputHandlers(stage.getScene());
@@ -53,8 +58,10 @@ public class GameController {
                 App.showPauseMenu();
             } catch (IOException e) {
                 e.printStackTrace();
-
             }
+        }
+        if (activeKeys.contains(KeyCode.SPACE)) {
+            player.shoot();
         }
     }
 
@@ -77,5 +84,9 @@ public class GameController {
         long currentTime = System.nanoTime();
         deltaTime = (currentTime - lastUpdateTime) / 1_000_000_000.0;
         lastUpdateTime = currentTime;
+    }
+
+    public static double getDeltaTime() {
+        return deltaTime;
     }
 }
