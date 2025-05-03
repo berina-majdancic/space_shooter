@@ -11,7 +11,10 @@ import io.github.berinamajdancic.entities.Enemy;
 import io.github.berinamajdancic.entities.Player;
 import io.github.berinamajdancic.entities.Projectile;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 public class GameController {
@@ -23,11 +26,14 @@ public class GameController {
     private static double deltaTime = 0;
     private double lastUpdateTime = 0;
     private DatabaseManager databaseManager;
+    private static Label scoreLabel;
+    private static ProgressBar healthBar;
 
     public GameController(Stage stage) throws IOException {
         databaseManager = new DatabaseManager();
         player = new Player();
         enemy = new Enemy();
+
         this.stage = stage;
         setupGame();
     }
@@ -35,6 +41,7 @@ public class GameController {
     private void setupGame() {
         Game.getGameWorld().getChildren().add(player.getShipView());
         Game.getGameWorld().getChildren().add(enemy.getShipView());
+        setupHUD();
         stage.show();
         App.getGameRoot().requestFocus();
         setupInputHandlers(stage.getScene());
@@ -107,11 +114,43 @@ public class GameController {
                     if (enemy.isDead()) {
                         enemy = null;
                         player.addScore(100);
+                        updateScore(player.getScore());
                         databaseManager.saveScore("playe1", 100);
                     }
                 }
             }
         }
+    }
+
+    private void setupHUD() {
+        scoreLabel = new Label("Score: 0");
+        scoreLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: white;");
+        scoreLabel.setTranslateX(10);
+        scoreLabel.setTranslateY(10);
+        scoreLabel.setText("Score: " + player.getScore());
+
+        Game.getHud().getChildren().add(scoreLabel);
+
+        Scene scene = ((Pane) Game.getGameWorld()).getScene();
+
+        healthBar = new ProgressBar();
+        healthBar.setPrefWidth(200);
+        healthBar.setStyle("-fx-accent: white; -fx-border-style: none;");
+        if (scene != null) {
+            healthBar.setTranslateX(((Pane) Game.getGameWorld()).getScene().getWidth() - 210);
+        }
+        healthBar.setTranslateY(20);
+        healthBar.setProgress(player.getHealth() / player.getMaxHealth());
+        Game.getHud().getChildren().add(healthBar);
+
+    }
+
+    public static void updateHealth(double health, double maxHealth) {
+        healthBar.setProgress(health / maxHealth);
+    }
+
+    public static void updateScore(int score) {
+        scoreLabel.setText("Score: " + score);
     }
 
 }

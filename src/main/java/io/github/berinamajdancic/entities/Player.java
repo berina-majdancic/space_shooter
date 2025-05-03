@@ -17,6 +17,8 @@ public class Player {
     private double x = 100, y = 100;
     private long lastShotTime = 0;
     private int score = 0;
+    private int health = 100;
+    private int maxHealth = 100;
 
     LinkedList<Projectile> projectiles;
 
@@ -27,7 +29,6 @@ public class Player {
 
     public void update() {
         updateProjectiles();
-
     }
 
     public ImageView getShipView() {
@@ -75,8 +76,8 @@ public class Player {
             projectiles.removeIf(projectile -> {
                 projectile.update();
                 if (projectile.outOfBounds()) {
-                    if (((Pane) Game.getGameWorld()) != null)
-                        ((Pane) Game.getGameWorld()).getChildren().remove(projectile.getProjectileView());
+
+                    ((Pane) Game.getGameWorld()).getChildren().remove(projectile.getProjectileView());
                     return true;
                 }
                 return false;
@@ -96,6 +97,14 @@ public class Player {
 
     public int getScore() {
         return score;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
     }
 
 }

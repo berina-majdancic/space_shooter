@@ -2,6 +2,7 @@ package io.github.berinamajdancic.entities;
 
 import io.github.berinamajdancic.Game;
 import io.github.berinamajdancic.controllers.GameController;
+import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 
@@ -33,9 +34,11 @@ public class Projectile {
     public void update() {
         y -= speed * GameController.getDeltaTime();
         bullet.setTranslateY(y);
-        if (((Pane) Game.getGameWorld()).getScene() != null)
-            if (y < 0 || y > ((Pane) Game.getGameWorld()).getScene().getHeight())
+        Scene scene = ((Pane) Game.getGameWorld()).getScene();
+        if (scene != null) {
+            if (y < 0 || y > (scene.getHeight()))
                 outOfBounds = true;
+        }
     }
 
     private void setupView() {
