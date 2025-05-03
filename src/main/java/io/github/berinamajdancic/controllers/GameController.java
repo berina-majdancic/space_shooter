@@ -6,13 +6,13 @@ import java.util.Set;
 
 import io.github.berinamajdancic.App;
 import io.github.berinamajdancic.DatabaseManager;
+import io.github.berinamajdancic.Game;
 import io.github.berinamajdancic.entities.Enemy;
 import io.github.berinamajdancic.entities.Player;
-import javafx.scene.Group;
+import io.github.berinamajdancic.entities.Projectile;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
-import io.github.berinamajdancic.entities.Projectile;
 
 public class GameController {
     private final Set<KeyCode> activeKeys = new HashSet<>();
@@ -33,19 +33,22 @@ public class GameController {
     }
 
     private void setupGame() {
-        ((Group) App.getGameRoot()).getChildren().add(player.getShipView());
-        ((Group) App.getGameRoot()).getChildren().add(enemy.getShipView());
+        Game.getGameWorld().getChildren().add(player.getShipView());
+        Game.getGameWorld().getChildren().add(enemy.getShipView());
         stage.show();
         App.getGameRoot().requestFocus();
         setupInputHandlers(stage.getScene());
     }
 
     public void update() {
+        updateDeltaTime();
         player.update();
+        if (enemy != null)
+            enemy.update();
         handleContinuousMovement();
         handleInstantActions();
-        updateDeltaTime();
-        checkCollisions();
+        handleCollisions();
+
     }
 
     public void setupInputHandlers(Scene scene) {
@@ -93,7 +96,7 @@ public class GameController {
         return deltaTime;
     }
 
-    private void checkCollisions() {
+    private void handleCollisions() {
 
         for (Projectile projectile : player.getProjectiles()) {
             if (enemy != null) {

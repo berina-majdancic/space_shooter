@@ -3,10 +3,10 @@ package io.github.berinamajdancic.entities;
 import java.io.InputStream;
 import java.util.LinkedList;
 
-import io.github.berinamajdancic.App;
-import javafx.scene.Group;
+import io.github.berinamajdancic.Game;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 
 public class Player {
     private final double width = 100, height = 100;
@@ -46,11 +46,13 @@ public class Player {
     }
 
     public void move(double dx, double dy) {
-        if (x + dx < 0 || x + width + dx > ((Group) App.getGameRoot()).getScene().getWidth()) {
-            dx = 0;
-        }
-        if (y + dy < 0 && y + height + dy > ((Group) App.getGameRoot()).getScene().getHeight()) {
-            dy = 0;
+        if (((Pane) Game.getGameWorld()).getScene() != null) {
+            if (x + dx < 0 && x + width + dx > ((Pane) Game.getGameWorld()).getScene().getWidth()) {
+                dx = 0;
+            }
+            if (y + dy < 0 && y + height + dy > ((Pane) Game.getGameWorld()).getScene().getHeight()) {
+                dy = 0;
+            }
         }
         x += dx * speed;
         y += dy * speed;
@@ -62,7 +64,7 @@ public class Player {
     public void shoot() {
         long currentTime = System.nanoTime();
         if (currentTime - lastShotTime >= fireRate) {
-            Projectile projectile = new Projectile(x + width / 2, y, 30);
+            Projectile projectile = new Projectile(x + width / 2, y, 30, 800);
             projectiles.add(projectile);
             lastShotTime = currentTime;
         }
@@ -71,15 +73,15 @@ public class Player {
     private void updateProjectiles() {
         if (!projectiles.isEmpty()) {
             projectiles.removeIf(projectile -> {
+                projectile.update();
                 if (projectile.outOfBounds()) {
-                    ((Group) App.getGameRoot()).getChildren().remove(projectile.getProjectileView());
+                    if (((Pane) Game.getGameWorld()) != null)
+                        ((Pane) Game.getGameWorld()).getChildren().remove(projectile.getProjectileView());
                     return true;
                 }
                 return false;
             });
-            for (Projectile projectile : projectiles) {
-                projectile.update();
-            }
+
         }
 
     }
