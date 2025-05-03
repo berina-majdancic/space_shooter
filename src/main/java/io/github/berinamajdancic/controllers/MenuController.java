@@ -41,6 +41,11 @@ public class MenuController {
     }
 
     @FXML
+    private void showLoginPage() throws IOException {
+        App.showLoginPage();
+    }
+
+    @FXML
     private void handleRegister() throws IOException {
         String username = usernameField.getText();
         String password = passwordField.getText();
@@ -54,6 +59,25 @@ public class MenuController {
         } else {
             DatabaseManager.Register(username, password);
             App.showMainMenu();
+
+        }
+    }
+
+    @FXML
+    private void handleLogin() throws IOException {
+        String username = usernameField.getText();
+        String password = passwordField.getText();
+        if (username.isEmpty() || password.isEmpty()) {
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error");
+
+            alert.setHeaderText(null);
+            alert.setContentText("Username or password cannot be empty.");
+            alert.showAndWait();
+        } else {
+            DatabaseManager.login(username, password);
+            App.showMainMenu();
+
         }
     }
 

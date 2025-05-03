@@ -50,4 +50,24 @@ public class DatabaseManager {
             System.err.println("Database error: " + e.getMessage());
         }
     }
+
+    public static void login(String username, String password) {
+        String query = "SELECT * FROM players WHERE username = ? AND password = ?";
+        try (Connection conn = DatabaseManager.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                System.out.println("Login successful!");
+            } else {
+                System.out.println("Invalid username or password.");
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Database error: " + e.getMessage());
+        }
+    }
 }
