@@ -67,7 +67,6 @@ public class Enemy {
         long currentTime = System.nanoTime();
         if (currentTime - lastMoveTime >= moveRate) {
             y = y + speed;
-            System.err.println("Moving");
             shipView.setTranslateY(y);
             if (((Pane) Game.getGameWorld()).getScene() != null) {
                 if (y > ((Pane) Game.getGameWorld()).getScene().getHeight()) {

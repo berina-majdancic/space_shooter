@@ -1,3 +1,8 @@
+@font-face {
+    font-family: "SilkScreen";
+    src: url("../fonts/silkscreen.ttf");
+}
+
 .label {
     -fx-font-size: 24px;
     -fx-font-weight: bold;
@@ -5,6 +10,8 @@
 }
 
 .root {
+    -fx-font-family: "SilkScreen";
+    
     -fx-background-image: url("/io/github/berinamajdancic/images/stars_background.jpg");
     -fx-background-size: cover;
     -fx-background-position: center;

@@ -41,7 +41,8 @@ public class Game {
     }
 
     private void setupGame() {
-        backgroundImage = new Image(getClass().getResourceAsStream("images/stars_background.jpg"));
+        backgroundImage = new Image(
+                getClass().getResourceAsStream("/io/github/berinamajdancic/images/stars_background.jpg"));
         backgroundImageView = new ImageView(backgroundImage);
         if (backgroundImageView.getImage() != null) {
             backgroundImageView.setFitWidth(1920);
