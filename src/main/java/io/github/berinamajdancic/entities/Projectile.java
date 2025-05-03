@@ -1,21 +1,30 @@
 package io.github.berinamajdancic.entities;
 
+import java.io.InputStream;
+
 import io.github.berinamajdancic.Game;
 import io.github.berinamajdancic.controllers.GameController;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Circle;
 
 public class Projectile {
     private final double speed;
     private double x, y;
-    private final double radius = 10;
     private boolean outOfBounds;
     private final int damage;
-    Circle bullet;
+    Image bulletImage;
+    private ImageView bulletImageView;
 
     public Projectile(double x, double y, int damage, double speed) {
-        bullet = new Circle(radius / 2);
+        InputStream inputStream = getClass().getResourceAsStream("/io/github/berinamajdancic/images/flare.png");
+        if (inputStream != null) {
+            bulletImage = new Image(inputStream);
+            if (bulletImage != null) {
+                bulletImageView = new ImageView(bulletImage);
+            }
+        }
         this.x = x;
         this.y = y;
         this.damage = damage;
@@ -33,7 +42,7 @@ public class Projectile {
 
     public void update() {
         y -= speed * GameController.getDeltaTime();
-        bullet.setTranslateY(y);
+        bulletImageView.setTranslateY(y);
         Scene scene = ((Pane) Game.getGameWorld()).getScene();
         if (scene != null) {
             if (y < 0 || y > (scene.getHeight()))
@@ -42,13 +51,17 @@ public class Projectile {
     }
 
     private void setupView() {
-        bullet.setTranslateX(x);
-        bullet.setTranslateY(y);
-        ((Pane) Game.getGameWorld()).getChildren().add(bullet);
+        if (bulletImageView != null) {
+            bulletImageView.setFitHeight(15);
+            bulletImageView.setFitWidth(15);
+            bulletImageView.setTranslateX(x);
+            bulletImageView.setTranslateY(y);
+            ((Pane) Game.getGameWorld()).getChildren().add(bulletImageView);
+        }
     }
 
-    public Circle getProjectileView() {
-        return bullet;
+    public ImageView getProjectileView() {
+        return bulletImageView;
     }
 
     public boolean outOfBounds() {

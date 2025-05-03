@@ -1,6 +1,6 @@
 @font-face {
-    font-family: "SilkScreen";
-    src: url("../fonts/silkscreen.ttf");
+    font-family: 'Silkscreen';
+    src: url('../fonts/Silkscreen-Regular.ttf');
 }
 
 .label {
@@ -10,12 +10,11 @@
 }
 
 .root {
-    -fx-font-family: "SilkScreen";
     
-    -fx-background-image: url("/io/github/berinamajdancic/images/stars_background.jpg");
-    -fx-background-size: cover;
+    -fx-font-family: "Silkscreen", sans-serif;
+    -fx-background-color: #000000;
+    -fx-background-image: url("../images/stars_background.png");
     -fx-background-position: center;
-    -fx-background-repeat: no-repeat;
 }
 
 .button {

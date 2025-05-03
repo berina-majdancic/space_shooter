@@ -9,12 +9,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
 public class Player {
-    private final double width = 100, height = 100;
+    private final double width = 150, height = 150;
     private final double fireRate = 100_000_000;
     private final double speed = 3.0;
     private Image shipImage;
     private ImageView shipView;
-    private double x = 100, y = 100;
+    private double x = 160, y = 128;
     private long lastShotTime = 0;
     private int score = 0;
     private int health = 100;
@@ -37,7 +37,7 @@ public class Player {
     }
 
     private void setupImageView() {
-        InputStream inputStream = getClass().getResourceAsStream("/io/github/berinamajdancic/images/spaceship.png");
+        InputStream inputStream = getClass().getResourceAsStream("/io/github/berinamajdancic/images/ship.png");
         shipImage = new Image(inputStream);
         shipView = new ImageView(shipImage);
         shipView.setFitWidth(width);
@@ -65,7 +65,7 @@ public class Player {
     public void shoot() {
         long currentTime = System.nanoTime();
         if (currentTime - lastShotTime >= fireRate) {
-            Projectile projectile = new Projectile(x + width / 2, y, 30, 800);
+            Projectile projectile = new Projectile(x + width / 2 - 7, y, 30, 800);
             projectiles.add(projectile);
             lastShotTime = currentTime;
         }
