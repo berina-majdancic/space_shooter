@@ -1,6 +1,10 @@
 package io.github.berinamajdancic;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class DatabaseManager {
     private static final String URL = "jdbc:mysql://localhost:1443/space_shooter";
@@ -21,6 +25,26 @@ public class DatabaseManager {
             stmt.setInt(2, score);
             stmt.setInt(3, score);
             stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            System.err.println("Database error: " + e.getMessage());
+        }
+    }
+
+    public static void Register(String username, String password) {
+        String query = "INSERT INTO players (username, password) VALUES (?, ?)";
+        try (Connection conn = DatabaseManager.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                System.out.println("Login successful!");
+            } else {
+                System.out.println("Invalid username or password.");
+            }
 
         } catch (SQLException e) {
             System.err.println("Database error: " + e.getMessage());

@@ -24,15 +24,23 @@ public class App extends Application {
     public void start(Stage stage) throws IOException {
         primaryStage = stage;
         setupStage();
-        showMainMenu();
-    }
-
-    private void showMainMenu() throws IOException {
         gameRoot = new Pane();
         scene = new Scene(gameRoot);
         primaryStage.setScene(scene);
-        setRoot("ui/main_menu");
+        showMainMenu();
         primaryStage.show();
+    }
+
+    public static void showMainMenu() throws IOException {
+        setRoot("ui/main_menu");
+    }
+
+    public static void showLoginPage() throws IOException {
+        setRoot("ui/login");
+    }
+
+    public static void showRegisterPage() throws IOException {
+        setRoot("ui/register");
     }
 
     public static void setRoot(String fxml) throws IOException {
