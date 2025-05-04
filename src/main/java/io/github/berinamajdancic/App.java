@@ -61,7 +61,6 @@ public class App extends Application {
     }
 
     public static void startGame() throws IOException {
-
         game = new Game(primaryStage);
         game.start();
     }

@@ -22,7 +22,8 @@ public class Game {
     private static StackPane root;
     private static Pane gameWorld;
     private static Pane hud;
-    private static final String BACKGROUND_PATH = "/io/github/berinamajdancic/images/starss.jpg";
+    private static final String BACKGROUND_PATH =
+            "/io/github/berinamajdancic/images/stars_background.jpg";
 
     public Game(Stage stage) throws IOException {
         this.stage = stage;
@@ -45,17 +46,15 @@ public class Game {
 
     private void setupGame() {
         Image backgroundImage = new Image(getClass().getResourceAsStream(BACKGROUND_PATH));
-        root.setBackground(
-                new Background(new BackgroundImage(backgroundImage, REPEAT, NO_REPEAT, CENTER, DEFAULT)));
-        /* 
-        backgroundImage = new Image(
-                getClass().getResourceAsStream("/io/github/berinamajdancic/images/starss.jpg"));
-        backgroundImageView = new ImageView(backgroundImage);
-        if (backgroundImageView.getImage() != null) {
-            backgroundImageView.setFitWidth(1920);
-            backgroundImageView.setFitHeight(1080);
-            //((StackPane) App.getGameRoot()).getChildren().add(backgroundImageView);
-        }*/
+        root.setBackground(new Background(
+                new BackgroundImage(backgroundImage, REPEAT, NO_REPEAT, CENTER, DEFAULT)));
+        /*
+         * backgroundImage = new Image(
+         * getClass().getResourceAsStream("/io/github/berinamajdancic/images/starss.jpg"));
+         * backgroundImageView = new ImageView(backgroundImage); if (backgroundImageView.getImage()
+         * != null) { backgroundImageView.setFitWidth(1920); backgroundImageView.setFitHeight(1080);
+         * //((StackPane) App.getGameRoot()).getChildren().add(backgroundImageView); }
+         */
     }
 
     public void showPauseMenu() {
@@ -83,6 +82,10 @@ public class Game {
 
     public static Pane getGameWorld() {
         return gameWorld;
+    }
+
+    public static StackPane getGameRoot() {
+        return root;
     }
 
 }

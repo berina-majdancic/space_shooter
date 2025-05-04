@@ -3,6 +3,8 @@ package io.github.berinamajdancic.controllers;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.LinkedList;
+
 
 import io.github.berinamajdancic.App;
 import io.github.berinamajdancic.DatabaseManager;
@@ -19,10 +21,12 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javafx.scene.layout.StackPane;
 
 public class GameController {
     private final Set<KeyCode> activeKeys = new HashSet<>();
     private final Player player;
+    private LinkedList<Enemy> enemies;
     private Enemy enemy;
     private final double movementSpeed = 300;
     private final Stage stage;
@@ -35,15 +39,19 @@ public class GameController {
     public GameController(Stage stage) throws IOException {
         databaseManager = new DatabaseManager();
         player = new Player();
-        enemy = new Enemy();
-
+        enemies = new LinkedList<>();
+        enemies.add(new Enemy());
+        enemies.add(new Enemy());
+        enemies.add(new Enemy());
         this.stage = stage;
         setupGame();
     }
 
     private void setupGame() {
         Game.getGameWorld().getChildren().add(player.getShipView());
-        Game.getGameWorld().getChildren().add(enemy.getShipView());
+        for (Enemy enemy : enemies) {
+            Game.getGameWorld().getChildren().add(enemy.getShipView());
+        }
         setupHUD();
         stage.show();
         App.getGameRoot().requestFocus();
@@ -53,8 +61,9 @@ public class GameController {
     public void update() {
         updateDeltaTime();
         player.update();
-        if (enemy != null)
+        for (Enemy enemy : enemies) {
             enemy.update();
+        }
         handleContinuousMovement();
         handleInstantActions();
         handleCollisions();
@@ -115,10 +124,7 @@ public class GameController {
                     enemy.takeDamage(projectile.getDamage());
                     projectile.setOutOfBounds(true);
                     if (enemy.isDead()) {
-                        enemy = null;
-                        player.addScore(100);
-                        updateScore(player.getScore());
-                        databaseManager.saveScore("playe1", 100);
+                        killEnemy();
                     }
                 }
             }
@@ -134,18 +140,16 @@ public class GameController {
 
         Game.getHud().getChildren().add(scoreLabel);
 
-        Scene scene = ((Pane) Game.getGameWorld()).getScene();
-        HBox healthBarContainer = new HBox();
-        healthBarContainer.setAlignment(Pos.TOP_RIGHT); // Align to the top-right
-        healthBarContainer.setPadding(new Insets(10)); // Optional padding
+        Scene scene = App.getGameRoot().getScene();
+
         healthBar = new ProgressBar();
         healthBar.setPrefWidth(200);
-        healthBar.setStyle("-fx-accent: white; -fx-border-style: none;");
-
+        healthBar.setStyle("-fx-accent: purple; -fx-border-style: none;");
+        if (scene != null)
+            healthBar.setTranslateX(scene.getWidth() - 220);
         healthBar.setTranslateY(20);
         healthBar.setProgress(player.getHealth() / player.getMaxHealth());
-        healthBarContainer.getChildren().add(healthBar);
-        Game.getHud().getChildren().add(healthBarContainer);
+        Game.getHud().getChildren().add(healthBar);
 
     }
 
@@ -155,6 +159,12 @@ public class GameController {
 
     public static void updateScore(int score) {
         scoreLabel.setText("Score: " + score);
+    }
+
+    private void killEnemy() {
+        enemy = null;
+        player.addScore(100);
+        updateScore(player.getScore());
     }
 
 }
