@@ -10,10 +10,13 @@ import io.github.berinamajdancic.Game;
 import io.github.berinamajdancic.entities.Enemy;
 import io.github.berinamajdancic.entities.Player;
 import io.github.berinamajdancic.entities.Projectile;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -132,16 +135,17 @@ public class GameController {
         Game.getHud().getChildren().add(scoreLabel);
 
         Scene scene = ((Pane) Game.getGameWorld()).getScene();
-
+        HBox healthBarContainer = new HBox();
+        healthBarContainer.setAlignment(Pos.TOP_RIGHT); // Align to the top-right
+        healthBarContainer.setPadding(new Insets(10)); // Optional padding
         healthBar = new ProgressBar();
         healthBar.setPrefWidth(200);
         healthBar.setStyle("-fx-accent: white; -fx-border-style: none;");
-        if (scene != null) {
-            healthBar.setTranslateX(((Pane) Game.getGameWorld()).getScene().getWidth() - 210);
-        }
+
         healthBar.setTranslateY(20);
         healthBar.setProgress(player.getHealth() / player.getMaxHealth());
-        Game.getHud().getChildren().add(healthBar);
+        healthBarContainer.getChildren().add(healthBar);
+        Game.getHud().getChildren().add(healthBarContainer);
 
     }
 

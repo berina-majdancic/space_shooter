@@ -58,10 +58,10 @@ public class App extends Application {
         primaryStage.setFullScreen(true);
         primaryStage.setFullScreenExitHint("");
         primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-        primaryStage.setResizable(false);
     }
 
     public static void startGame() throws IOException {
+
         game = new Game(primaryStage);
         game.start();
     }

@@ -5,7 +5,12 @@ import java.io.IOException;
 import io.github.berinamajdancic.controllers.GameController;
 import javafx.animation.AnimationTimer;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import static javafx.scene.layout.BackgroundPosition.CENTER;
+import static javafx.scene.layout.BackgroundRepeat.NO_REPEAT;
+import static javafx.scene.layout.BackgroundRepeat.REPEAT;
+import static javafx.scene.layout.BackgroundSize.DEFAULT;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -17,15 +22,13 @@ public class Game {
     private static StackPane root;
     private static Pane gameWorld;
     private static Pane hud;
-    private Image backgroundImage;
-    private ImageView backgroundImageView;
+    private static final String BACKGROUND_PATH = "/io/github/berinamajdancic/images/starss.jpg";
 
     public Game(Stage stage) throws IOException {
         this.stage = stage;
         root = new StackPane();
         gameWorld = new Pane();
         hud = new Pane();
-        stage.getScene().setRoot(root);
         root.getChildren().addAll(gameWorld, hud);
         gameController = new GameController(stage);
         setupGame();
@@ -41,14 +44,18 @@ public class Game {
     }
 
     private void setupGame() {
+        Image backgroundImage = new Image(getClass().getResourceAsStream(BACKGROUND_PATH));
+        root.setBackground(
+                new Background(new BackgroundImage(backgroundImage, REPEAT, NO_REPEAT, CENTER, DEFAULT)));
+        /* 
         backgroundImage = new Image(
-                getClass().getResourceAsStream("/io/github/berinamajdancic/images/stars_background.jpg"));
+                getClass().getResourceAsStream("/io/github/berinamajdancic/images/starss.jpg"));
         backgroundImageView = new ImageView(backgroundImage);
         if (backgroundImageView.getImage() != null) {
             backgroundImageView.setFitWidth(1920);
             backgroundImageView.setFitHeight(1080);
-            ((StackPane) App.getGameRoot()).getChildren().add(backgroundImageView);
-        }
+            //((StackPane) App.getGameRoot()).getChildren().add(backgroundImageView);
+        }*/
     }
 
     public void showPauseMenu() {
@@ -65,6 +72,7 @@ public class Game {
     }
 
     public void start() {
+        stage.getScene().setRoot(root);
         SetupGameLoop();
         gameLoop.start();
     }

@@ -13,8 +13,10 @@
     
     -fx-font-family: "Silkscreen", sans-serif;
     -fx-background-color: #000000;
-    -fx-background-image: url("../images/stars_background.png");
+    -fx-background-image: url('../images/starss.jpg');
     -fx-background-position: center;
+    -fx-background-size: cover;
+    -fx-background-repeat: no-repeat;
 }
 
 .button {
@@ -23,13 +25,18 @@
     -fx-text-fill: #ffffff;
     -fx-font-size: 24px;
     -fx-font-weight: bold;
-    -fx-padding: 10px;
+    -fx-padding: 10px 14px; /* Added right/left padding to account for growth */
+    -fx-min-width: 100px; /* Set minimum width based on your needs */
+    -fx-min-height: 60px; /* Set minimum height based on your needs */
+    -fx-alignment: center;
+    -fx-cursor: hand;
 }
 
 .button:hover {
-    -fx-font-size: 28px;
+    -fx-font-size: 27px;
+    -fx-translate-x: -2px; /* Small adjustment to keep centered */
+    -fx-translate-y: -2px;
 }
-
 .game-header {
     -fx-font-size: 70px;
     -fx-font-weight: bold;
@@ -47,16 +54,29 @@
 }
 
 .login-header {
-    -fx-font-size: 24px;
+    -fx-font-size: 30px;
     -fx-font-weight: bold;
-    -fx-text-fill: #333;
+    -fx-padding: 20px;
 }
 
 TextField, PasswordField {
-    -fx-pref-width: 200px;
-}
+    -fx-pref-width: 230px;
 
-Button {
-    -fx-font-size: 14px;
-    -fx-padding: 5px 15px;
+    -fx-padding: 6px 12px;
+    -fx-background-color: rgb(31, 32, 35);
+    -fx-border-color: rgb(60, 63, 68);
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-font-size: 13px;
+    -fx-text-fill: rgb(247, 248, 248);
+    -fx-pref-height: 50px;
+    -fx-pref-width: 200px;
+    -fx-alignment: center; 
+    -fx-appearance: none;
+    -fx-transition: border 0.15s ease 0s;
+
+}
+TextField:focused, PasswordField:focused {
+    -fx-border-color: rgb(100, 153, 255);
+    -fx-effect: none;
 }

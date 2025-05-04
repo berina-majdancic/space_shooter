@@ -46,6 +46,11 @@ public class MenuController {
     }
 
     @FXML
+    private void showMainMenu() throws IOException {
+        App.showMainMenu();
+    }
+
+    @FXML
     private void handleRegister() throws IOException {
         String username = usernameField.getText();
         String password = passwordField.getText();
