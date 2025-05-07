@@ -58,9 +58,12 @@ public class Enemy {
     }
 
     public void update() {
-        move();
-        shoot();
-        updateProjectiles();
+        calculatePosition();
+        calculateProjectilePosition();
+        // shoot();
+        //updatePosition();
+        // updateProjectiles();
+        //
     }
 
     public ImageView getShipView() {
@@ -81,11 +84,10 @@ public class Enemy {
         }
     }
 
-    private void move() {
+    private void calculatePosition() {
         long currentTime = System.nanoTime();
         if (currentTime - lastMoveTime >= moveRate) {
             y = y + speed;
-            shipView.setTranslateY(y);
             if (shipView.getScene() != null) {
                 if (x < 0 || x > shipView.getScene().getWidth()
                         || y > shipView.getScene().getHeight()) {
@@ -94,6 +96,10 @@ public class Enemy {
             }
             lastMoveTime = currentTime;
         }
+    }
+
+    public void updatePosition() {
+        shipView.setTranslateY(y);
     }
 
     public void shoot() {
@@ -110,16 +116,27 @@ public class Enemy {
         }
     }
 
-    private void updateProjectiles() {
+    public void updateProjectilePosition() {
         for (int i = 0; i < projectiles.size(); i++) {
             Projectile projectile = projectiles.get(i);
             if (projectile.outOfBounds()) {
                 Game.getGameWorld().getChildren()
                         .remove(projectile.getProjectileView());
                 projectiles.remove(i);
+                System.err.println("ProjectileRemoved");
                 i--;
             }
-            projectile.update();
+            projectile.updatePosition();
+
+        }
+
+    }
+
+    private void calculateProjectilePosition() {
+        for (int i = 0; i < projectiles.size(); i++) {
+            Projectile projectile = projectiles.get(i);
+
+            projectile.calculatePosition();
 
         }
 

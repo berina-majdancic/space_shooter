@@ -38,11 +38,9 @@ public class Projectile {
         this.outOfBounds = outOfBounds;
     }
 
-    public void update() {
+    public void calculatePosition() {
         y -= speedY * GameController.getDeltaTime();
-        bulletImageView.setTranslateY(y);
         x += speedX * GameController.getDeltaTime();
-        bulletImageView.setTranslateX(x);
         Scene scene = bulletImageView.getScene();
         if (scene != null) {
             if (y < 0 || y > (scene.getHeight()))
@@ -68,5 +66,12 @@ public class Projectile {
 
     public boolean outOfBounds() {
         return outOfBounds;
+    }
+
+    public void updatePosition() {
+        if (bulletImageView.getScene() != null) {
+            bulletImageView.setTranslateX(x);
+            bulletImageView.setTranslateY(y);
+        }
     }
 }

@@ -10,6 +10,7 @@ import io.github.berinamajdancic.DatabaseManager;
 import io.github.berinamajdancic.Game;
 import io.github.berinamajdancic.entities.Enemy;
 import io.github.berinamajdancic.entities.Player;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -53,7 +54,7 @@ public class GameController {
     public void update() {
         updateDeltaTime();
         player.update();
-        updateEnemies();
+        //updateEnemies();
         handleContinuousMovement();
         handleInstantActions();
         handleCollisions();
@@ -170,6 +171,29 @@ public class GameController {
         // enemy = null;
         player.addScore(100);
         updateScore(player.getScore());
+    }
+
+    public void startEnemyBehavior() {
+        for (Enemy enemy : enemies) {
+
+            new Thread(() -> {
+                while (!Thread.currentThread().isInterrupted()) {
+                    enemy.update();
+                    Platform.runLater(() -> {
+                        // Handle collision results (e.g., remove projectiles or enemies)
+                        enemy.shoot();
+                        enemy.updatePosition();
+                        enemy.updateProjectilePosition();
+
+                    });
+                    try {
+                        Thread.sleep(10); // Adjust sleep time as needed
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }).start();
+        }
     }
 
 }
