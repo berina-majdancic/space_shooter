@@ -16,14 +16,13 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class Game {
-    private AnimationTimer gameLoop;
+    private static AnimationTimer gameLoop;
     GameController gameController;
     private static Stage stage;
     private static StackPane root;
     private static Pane gameWorld;
     private static Pane hud;
-    private static final String BACKGROUND_PATH =
-            "/io/github/berinamajdancic/images/stars_background.jpg";
+    private static final String BACKGROUND_PATH = "/io/github/berinamajdancic/images/stars_background.jpg";
 
     public Game(Stage stage) throws IOException {
         this.stage = stage;
@@ -82,6 +81,13 @@ public class Game {
 
     public static Pane getGameWorld() {
         return gameWorld;
+    }
+
+    public static void deleteGame() {
+        gameLoop.stop();
+        gameWorld.getChildren().clear();
+        hud.getChildren().clear();
+        root.getChildren().clear();
     }
 
     public static StackPane getGameRoot() {
