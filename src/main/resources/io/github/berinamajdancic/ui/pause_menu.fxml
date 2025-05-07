@@ -13,6 +13,7 @@
             <Label text="SPACE_SHOOTER" styleClass="game-header" />
          </children>
             <Button text="Resume" onAction="#resumeGame" />
+            <Button text="Restart" onAction="#restartGame" />
             <Button text="Main Menu" onAction="#showMainMenu" />
             <Button text="Exit" onAction="#exitApplication" />
       </VBox>
