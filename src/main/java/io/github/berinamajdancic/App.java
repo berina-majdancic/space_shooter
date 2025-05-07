@@ -74,6 +74,12 @@ public class App extends Application {
         }
     }
 
+    public static void restartGame() throws IOException {
+        game.deleteGame();
+        game = null;
+        startGame();
+    }
+
     public static void resumeGame() throws IOException {
         game.resumeGame();
     }

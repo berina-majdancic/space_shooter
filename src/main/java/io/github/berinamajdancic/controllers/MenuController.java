@@ -25,9 +25,13 @@ public class MenuController {
     }
 
     @FXML
-
     private void startGame() throws IOException {
         App.startGame();
+    }
+
+    @FXML
+    private void restartGame() throws IOException {
+        App.restartGame();
     }
 
     @FXML
