@@ -1,33 +1,25 @@
 package io.github.berinamajdancic.controllers;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.LinkedList;
-
 
 import io.github.berinamajdancic.App;
 import io.github.berinamajdancic.DatabaseManager;
 import io.github.berinamajdancic.Game;
 import io.github.berinamajdancic.entities.Enemy;
 import io.github.berinamajdancic.entities.Player;
-import io.github.berinamajdancic.entities.Projectile;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import javafx.scene.layout.StackPane;
 
 public class GameController {
     private final Set<KeyCode> activeKeys = new HashSet<>();
     private final Player player;
-    private LinkedList<Enemy> enemies;
-    private Enemy enemy;
+    private ArrayList<Enemy> enemies;
     private final double movementSpeed = 300;
     private final Stage stage;
     private static double deltaTime = 0;
@@ -39,7 +31,7 @@ public class GameController {
     public GameController(Stage stage) throws IOException {
         databaseManager = new DatabaseManager();
         player = new Player();
-        enemies = new LinkedList<>();
+        enemies = new ArrayList<>();
         enemies.add(new Enemy());
         enemies.add(new Enemy());
         enemies.add(new Enemy());
@@ -61,12 +53,25 @@ public class GameController {
     public void update() {
         updateDeltaTime();
         player.update();
-        for (Enemy enemy : enemies) {
-            enemy.update();
-        }
+        updateEnemies();
         handleContinuousMovement();
         handleInstantActions();
         handleCollisions();
+
+    }
+
+    private void updateEnemies() {
+
+        for (int i = 0; i < enemies.size(); i++) {
+            Enemy enemy = enemies.get(i);
+            enemy.update();
+            if (enemy.isOutOfBounds() || enemy.isDead()) {
+
+                Game.getGameWorld().getChildren().remove(enemy.getShipView());
+                enemies.remove(enemy);
+                i--;
+            }
+        }
 
     }
 
@@ -116,7 +121,7 @@ public class GameController {
     }
 
     private void handleCollisions() {
-
+        /* 
         for (Projectile projectile : player.getProjectiles()) {
             if (enemy != null) {
                 if (projectile.getProjectileView().getBoundsInParent()
@@ -128,7 +133,7 @@ public class GameController {
                     }
                 }
             }
-        }
+        }*/
     }
 
     private void setupHUD() {
@@ -162,7 +167,7 @@ public class GameController {
     }
 
     private void killEnemy() {
-        enemy = null;
+        // enemy = null;
         player.addScore(100);
         updateScore(player.getScore());
     }

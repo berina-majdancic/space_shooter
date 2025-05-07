@@ -1,7 +1,5 @@
 package io.github.berinamajdancic.entities;
 
-import java.io.InputStream;
-
 import io.github.berinamajdancic.Game;
 import io.github.berinamajdancic.controllers.GameController;
 import javafx.scene.Scene;
@@ -10,25 +8,25 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
 public class Projectile {
-    private final double speed;
+    private final double speedX, speedY;
     private double x, y;
     private boolean outOfBounds;
     private final int damage;
-    Image bulletImage;
+    private static Image bulletImage;
     private ImageView bulletImageView;
 
-    public Projectile(double x, double y, int damage, double speed) {
-        InputStream inputStream = getClass().getResourceAsStream("/io/github/berinamajdancic/images/flare.png");
-        if (inputStream != null) {
-            bulletImage = new Image(inputStream);
-            if (bulletImage != null) {
-                bulletImageView = new ImageView(bulletImage);
-            }
+    public Projectile(double x, double y, int damage, double speedX, double speedY) {
+        if (bulletImage == null) {
+            bulletImage = new Image(getClass().getResourceAsStream("/io/github/berinamajdancic/images/flare.png"));
+        }
+        if (bulletImage != null) {
+            bulletImageView = new ImageView(bulletImage);
         }
         this.x = x;
         this.y = y;
         this.damage = damage;
-        this.speed = speed;
+        this.speedX = speedX;
+        this.speedY = speedY;
         setupView();
     }
 
@@ -41,11 +39,15 @@ public class Projectile {
     }
 
     public void update() {
-        y -= speed * GameController.getDeltaTime();
+        y -= speedY * GameController.getDeltaTime();
         bulletImageView.setTranslateY(y);
-        Scene scene = ((Pane) Game.getGameWorld()).getScene();
+        x += speedX * GameController.getDeltaTime();
+        bulletImageView.setTranslateX(x);
+        Scene scene = bulletImageView.getScene();
         if (scene != null) {
             if (y < 0 || y > (scene.getHeight()))
+                outOfBounds = true;
+            if (x < 0 || x > (scene.getWidth()))
                 outOfBounds = true;
         }
     }

@@ -1,12 +1,11 @@
 package io.github.berinamajdancic.entities;
 
 import java.io.InputStream;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 import io.github.berinamajdancic.Game;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 
 public class Player {
     private final double width = 150, height = 150;
@@ -20,10 +19,10 @@ public class Player {
     private int health = 100;
     private int maxHealth = 100;
 
-    LinkedList<Projectile> projectiles;
+    ArrayList<Projectile> projectiles;
 
     public Player() {
-        projectiles = new LinkedList<>();
+        projectiles = new ArrayList<>();
         setupImageView();
     }
 
@@ -47,47 +46,44 @@ public class Player {
     }
 
     public void move(double dx, double dy) {
-        if (((Pane) Game.getGameWorld()).getScene() != null) {
-            if (x + dx < 0 && x + width + dx > ((Pane) Game.getGameWorld()).getScene().getWidth()) {
-                dx = 0;
+        if (shipView.getScene() != null) {
+            double newX = x + dx * speed;
+            double newY = y + dy * speed;
+            if (newX > 0 && newX + width < shipView.getScene().getWidth()) {
+                x = newX;
             }
-            if (y + dy < 0 && y + height + dy > ((Pane) Game.getGameWorld()).getScene().getHeight()) {
-                dy = 0;
+            if (newY > 0 && newY + height < shipView.getScene().getHeight()) {
+                y = newY;
             }
         }
-        x += dx * speed;
-        y += dy * speed;
         shipView.setTranslateX(x);
         shipView.setTranslateY(y);
-
     }
 
     public void shoot() {
         long currentTime = System.nanoTime();
         if (currentTime - lastShotTime >= fireRate) {
-            Projectile projectile = new Projectile(x + width / 2 - 7, y, 30, 800);
+            Projectile projectile = new Projectile(x + width / 2 - 7, y, 30, 0, 800);
             projectiles.add(projectile);
             lastShotTime = currentTime;
         }
     }
 
     private void updateProjectiles() {
-        if (!projectiles.isEmpty()) {
-            projectiles.removeIf(projectile -> {
-                projectile.update();
-                if (projectile.outOfBounds()) {
-
-                    ((Pane) Game.getGameWorld()).getChildren().remove(projectile.getProjectileView());
-                    return true;
-                }
-                return false;
-            });
+        for (int i = 0; i < projectiles.size(); i++) {
+            Projectile projectile = projectiles.get(i);
+            if (projectile.outOfBounds()) {
+                Game.getGameWorld().getChildren().remove(projectile.getProjectileView());
+                projectiles.remove(i);
+                i--;
+            }
+            projectile.update();
 
         }
 
     }
 
-    public LinkedList<Projectile> getProjectiles() {
+    public ArrayList<Projectile> getProjectiles() {
         return projectiles;
     }
 

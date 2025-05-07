@@ -1,38 +1,36 @@
 package io.github.berinamajdancic.entities;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 import io.github.berinamajdancic.Game;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
-
-import io.github.berinamajdancic.App;
 
 public class Enemy {
 
     private double speed = 1;
-    private Image shipImage;
+    private static Image shipImage;
     private ImageView shipView;
     private int health = 100;
     private double x = 600, y = 100;
     private final double width = 100, height = 100;
-    private final double fireRate = 100_000_000;
+    private final double fireRate = 1_000_000_000;
     private final double moveRate = 10_000_000;
     private long lastShotTime = 0;
     private boolean isOutOfBounds = false;
     private long lastMoveTime = 0;
-    private LinkedList<Projectile> projectiles;
+    private ArrayList<Projectile> projectiles;
+    private final double shipCenter = width / 2 - 7;
 
     public Enemy() {
         randomizePosition();
         setupImageView();
-        projectiles = new LinkedList<>();
+        projectiles = new ArrayList<>();
     }
 
     private void randomizePosition() {
         x = Math.random() * 1920;
-        y = Math.random() * 400;
+        y = Math.random() * -300;
 
     }
 
@@ -47,14 +45,14 @@ public class Enemy {
     public void takeDamage(int damage) {
         health -= damage;
         if (health <= 0) {
-
-            projectiles.forEach(projectile -> {
-                if (((Pane) Game.getGameWorld()).getScene() != null)
-                    ((Pane) Game.getGameWorld()).getChildren()
+            for (int i = 0; i < projectiles.size(); i++) {
+                Projectile projectile = projectiles.get(i);
+                if (getShipView().getScene() != null)
+                    Game.getGameWorld().getChildren()
                             .remove(projectile.getProjectileView());
-            });
-            if (((Pane) Game.getGameWorld()).getScene() != null)
-                ((Pane) Game.getGameWorld()).getChildren().remove(shipView);
+            }
+            if (getShipView().getScene() != null)
+                Game.getGameWorld().getChildren().remove(shipView);
 
         }
     }
@@ -70,13 +68,17 @@ public class Enemy {
     }
 
     private void setupImageView() {
-        shipImage = new Image(
-                getClass().getResourceAsStream("/io/github/berinamajdancic/images/enemy_ship.png"));
-        shipView = new ImageView(shipImage);
-        shipView.setFitWidth(width);
-        shipView.setFitHeight(height);
-        shipView.setTranslateX(x);
-        shipView.setTranslateY(y);
+        if (shipImage == null)
+            shipImage = new Image(
+                    getClass().getResourceAsStream("/io/github/berinamajdancic/images/enemy_ship.png"));
+        if (shipImage != null) {
+            shipView = new ImageView(shipImage);
+            shipView.setFitWidth(width);
+            shipView.setFitHeight(height);
+            shipView.setTranslateX(x);
+            shipView.setTranslateY(y);
+
+        }
     }
 
     private void move() {
@@ -84,8 +86,9 @@ public class Enemy {
         if (currentTime - lastMoveTime >= moveRate) {
             y = y + speed;
             shipView.setTranslateY(y);
-            if (((Pane) Game.getGameWorld()).getScene() != null) {
-                if (y > ((Pane) Game.getGameWorld()).getScene().getHeight()) {
+            if (shipView.getScene() != null) {
+                if (x < 0 || x > shipView.getScene().getWidth()
+                        || y > shipView.getScene().getHeight()) {
                     isOutOfBounds = true;
                 }
             }
@@ -96,25 +99,27 @@ public class Enemy {
     public void shoot() {
         long currentTime = System.nanoTime();
         if (currentTime - lastShotTime >= fireRate) {
-            Projectile projectile = new Projectile(x + width / 2 - 7, y + height, 30, -800);
+            Projectile projectile = new Projectile(x + shipCenter, y + height, 30, 0, -800);
+            Projectile projectile2 = new Projectile(x + shipCenter + 8, y + height, 30, 700, -800);
+            Projectile projectile3 = new Projectile(x + shipCenter - 8, y + height, 30, -700, -800);
+
             projectiles.add(projectile);
+            projectiles.add(projectile2);
+            projectiles.add(projectile3);
             lastShotTime = currentTime;
         }
     }
 
     private void updateProjectiles() {
-        if (!projectiles.isEmpty()) {
-            projectiles.removeIf(projectile -> {
-                projectile.update();
-                if (projectile.outOfBounds()) {
-                    if (((Pane) Game.getGameWorld()).getScene() != null)
-                        ((Pane) Game.getGameWorld()).getChildren()
-                                .remove(projectile.getProjectileView());
-                    System.out.println("Removing projectile");
-                    return true;
-                }
-                return false;
-            });
+        for (int i = 0; i < projectiles.size(); i++) {
+            Projectile projectile = projectiles.get(i);
+            if (projectile.outOfBounds()) {
+                Game.getGameWorld().getChildren()
+                        .remove(projectile.getProjectileView());
+                projectiles.remove(i);
+                i--;
+            }
+            projectile.update();
 
         }
 
