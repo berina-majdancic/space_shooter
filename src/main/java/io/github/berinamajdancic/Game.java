@@ -72,7 +72,7 @@ public class Game {
     public void start() {
         stage.getScene().setRoot(root);
         SetupGameLoop();
-        gameController.startEnemyBehavior();
+        gameController.startCOllisionThread();
         gameLoop.start();
     }
 

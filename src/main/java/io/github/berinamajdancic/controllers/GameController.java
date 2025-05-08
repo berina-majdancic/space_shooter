@@ -10,7 +10,7 @@ import io.github.berinamajdancic.DatabaseManager;
 import io.github.berinamajdancic.Game;
 import io.github.berinamajdancic.entities.Enemy;
 import io.github.berinamajdancic.entities.Player;
-import javafx.application.Platform;
+import io.github.berinamajdancic.entities.Projectile;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -42,9 +42,6 @@ public class GameController {
 
     private void setupGame() {
         Game.getGameWorld().getChildren().add(player.getShipView());
-        for (Enemy enemy : enemies) {
-            Game.getGameWorld().getChildren().add(enemy.getShipView());
-        }
         setupHUD();
         stage.show();
         App.getGameRoot().requestFocus();
@@ -54,10 +51,9 @@ public class GameController {
     public void update() {
         updateDeltaTime();
         player.update();
-        //updateEnemies();
+        updateEnemies();
         handleContinuousMovement();
         handleInstantActions();
-        handleCollisions();
 
     }
 
@@ -65,12 +61,16 @@ public class GameController {
 
         for (int i = 0; i < enemies.size(); i++) {
             Enemy enemy = enemies.get(i);
-            enemy.update();
+            if (enemy.isDead()) {
+                player.addScore(100);
+                updateScore(player.getScore());
+            }
             if (enemy.isOutOfBounds() || enemy.isDead()) {
-
+                enemy.removeEnemy();
                 Game.getGameWorld().getChildren().remove(enemy.getShipView());
-                enemies.remove(enemy);
+                enemies.remove(i);
                 i--;
+                enemies.add(new Enemy());
             }
         }
 
@@ -122,19 +122,34 @@ public class GameController {
     }
 
     private void handleCollisions() {
-        /* 
-        for (Projectile projectile : player.getProjectiles()) {
-            if (enemy != null) {
+
+        for (int i = 0; i < player.getProjectiles().size(); i++) {
+            Projectile projectile = player.getProjectiles().get(i);
+            for (int j = 0; j < enemies.size(); j++) {
+                Enemy enemy = enemies.get(j);
                 if (projectile.getProjectileView().getBoundsInParent()
                         .intersects(enemy.getShipView().getBoundsInParent())) {
                     enemy.takeDamage(projectile.getDamage());
                     projectile.setOutOfBounds(true);
-                    if (enemy.isDead()) {
-                        killEnemy();
+                }
+            }
+        }
+        for (int i = 0; i < enemies.size(); i++) {
+            Enemy enemy = enemies.get(i);
+            for (int j = 0; j < enemy.getProjectiles().size(); j++) {
+                Projectile projectile = enemy.getProjectiles().get(j);
+                if (projectile.getProjectileView().getBoundsInParent()
+                        .intersects(player.getShipView().getBoundsInParent())) {
+                    player.takeDamage(projectile.getDamage());
+                    projectile.setOutOfBounds(true);
+                    if (enemy.isDead() || enemy.isOutOfBounds()) {
+                        enemies.remove(i);
+                        i--;
                     }
                 }
             }
-        }*/
+        }
+
     }
 
     private void setupHUD() {
@@ -173,27 +188,19 @@ public class GameController {
         updateScore(player.getScore());
     }
 
-    public void startEnemyBehavior() {
-        for (Enemy enemy : enemies) {
-
-            new Thread(() -> {
-                while (!Thread.currentThread().isInterrupted()) {
-                    enemy.update();
-                    Platform.runLater(() -> {
-                        // Handle collision results (e.g., remove projectiles or enemies)
-                        enemy.shoot();
-                        enemy.updatePosition();
-                        enemy.updateProjectilePosition();
-
-                    });
-                    try {
-                        Thread.sleep(10); // Adjust sleep time as needed
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
+    public void startCOllisionThread() {
+        Thread thread = new Thread(() -> {
+            while (!enemies.isEmpty() && !Thread.currentThread().isInterrupted()) {
+                handleCollisions();
+                try {
+                    Thread.sleep(10); // Adjust the sleep time as needed
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt(); // Restore the interrupted status
                 }
-            }).start();
-        }
+            }
+        });
+        thread.setDaemon(true);
+        thread.start();
     }
 
 }

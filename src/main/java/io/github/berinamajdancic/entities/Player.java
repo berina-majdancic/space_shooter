@@ -77,10 +77,15 @@ public class Player {
                 projectiles.remove(i);
                 i--;
             }
-            projectile.update();
+            projectile.calculatePosition();
+            projectile.updatePosition();
 
         }
 
+    }
+
+    public void takeDamage(double damage) {
+        health -= damage;
     }
 
     public ArrayList<Projectile> getProjectiles() {

@@ -3,6 +3,7 @@ package io.github.berinamajdancic.entities;
 import java.util.ArrayList;
 
 import io.github.berinamajdancic.Game;
+import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -11,14 +12,15 @@ public class Enemy {
     private double speed = 1;
     private static Image shipImage;
     private ImageView shipView;
-    private int health = 100;
+    private int health = 200;
     private double x = 600, y = 100;
     private final double width = 100, height = 100;
     private final double fireRate = 1_000_000_000;
-    private final double moveRate = 10_000_000;
+    private final double moveRate = 1_000_000;
     private long lastShotTime = 0;
     private boolean isOutOfBounds = false;
     private long lastMoveTime = 0;
+    private boolean isDead = true;
     private ArrayList<Projectile> projectiles;
     private final double shipCenter = width / 2 - 7;
 
@@ -26,16 +28,19 @@ public class Enemy {
         randomizePosition();
         setupImageView();
         projectiles = new ArrayList<>();
+        startEnemyBehavior();
+        Game.getGameWorld().getChildren().add(shipView);
+
     }
 
     private void randomizePosition() {
-        x = Math.random() * 1920;
+        x = Math.random() * 1000;
         y = Math.random() * -300;
 
     }
 
     public boolean isDead() {
-        return health < 0;
+        return health <= 0;
     }
 
     public boolean isOutOfBounds() {
@@ -45,16 +50,19 @@ public class Enemy {
     public void takeDamage(int damage) {
         health -= damage;
         if (health <= 0) {
-            for (int i = 0; i < projectiles.size(); i++) {
-                Projectile projectile = projectiles.get(i);
-                if (getShipView().getScene() != null)
-                    Game.getGameWorld().getChildren()
-                            .remove(projectile.getProjectileView());
-            }
-            if (getShipView().getScene() != null)
-                Game.getGameWorld().getChildren().remove(shipView);
-
+            isDead = true;
         }
+    }
+
+    public void removeEnemy() {
+        for (int i = 0; i < projectiles.size(); i++) {
+            Projectile projectile = projectiles.get(i);
+            if (getShipView().getScene() != null)
+                Game.getGameWorld().getChildren()
+                        .remove(projectile.getProjectileView());
+        }
+        if (getShipView().getScene() != null)
+            Game.getGameWorld().getChildren().remove(shipView);
     }
 
     public void update() {
@@ -105,9 +113,9 @@ public class Enemy {
     public void shoot() {
         long currentTime = System.nanoTime();
         if (currentTime - lastShotTime >= fireRate) {
-            Projectile projectile = new Projectile(x + shipCenter, y + height, 30, 0, -800);
-            Projectile projectile2 = new Projectile(x + shipCenter + 8, y + height, 30, 700, -800);
-            Projectile projectile3 = new Projectile(x + shipCenter - 8, y + height, 30, -700, -800);
+            Projectile projectile = new Projectile(x + shipCenter, y + height, 30, 0, -700);
+            Projectile projectile2 = new Projectile(x + shipCenter + 8, y + height, 30, 300, -400);
+            Projectile projectile3 = new Projectile(x + shipCenter - 8, y + height, 30, -300, -400);
 
             projectiles.add(projectile);
             projectiles.add(projectile2);
@@ -142,4 +150,31 @@ public class Enemy {
 
     }
 
+    public ArrayList<Projectile> getProjectiles() {
+        return projectiles;
+    }
+
+    private void startEnemyBehavior() {
+
+        Thread thread = new Thread(() -> {
+            while (!isDead() && !isOutOfBounds() && !Thread.currentThread().isInterrupted()) {
+                update();
+                Platform.runLater(() -> {
+                    // Handle collision results (e.g., remove projectiles or enemies)
+                    shoot();
+                    updatePosition();
+                    updateProjectilePosition();
+
+                });
+                try {
+                    Thread.sleep(10); // Adjust the sleep time as needed
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt(); // Restore the interrupted status
+                }
+
+            }
+        });
+        thread.setDaemon(true);
+        thread.start();
+    }
 }
