@@ -15,7 +15,7 @@ public class Enemy {
     private int health = 200;
     private double x = 600, y = 100;
     private final double width = 100, height = 100;
-    private final double fireRate = 1_000_000_000;
+    private final double fireRate = 2_000_000_000;
     private final double moveRate = 1_000_000;
     private long lastShotTime = 0;
     private boolean isOutOfBounds = false;
@@ -113,11 +113,9 @@ public class Enemy {
     public void shoot() {
         long currentTime = System.nanoTime();
         if (currentTime - lastShotTime >= fireRate) {
-            Projectile projectile = new Projectile(x + shipCenter, y + height, 30, 0, -700);
-            Projectile projectile2 = new Projectile(x + shipCenter + 8, y + height, 30, 300, -400);
-            Projectile projectile3 = new Projectile(x + shipCenter - 8, y + height, 30, -300, -400);
+            Projectile projectile2 = new Projectile(x + shipCenter + 8, y + height, 30, 150, -150);
+            Projectile projectile3 = new Projectile(x + shipCenter - 8, y + height, 30, -150, -150);
 
-            projectiles.add(projectile);
             projectiles.add(projectile2);
             projectiles.add(projectile3);
             lastShotTime = currentTime;
