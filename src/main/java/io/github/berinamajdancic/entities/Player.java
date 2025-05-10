@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import io.github.berinamajdancic.Game;
+import io.github.berinamajdancic.controllers.GameController;
+import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -16,18 +18,16 @@ public class Player {
     private double x = 160, y = 128;
     private long lastShotTime = 0;
     private int score = 0;
-    private int health = 100;
-    private int maxHealth = 100;
+    private int health;
+    private int maxHealth = 500;
 
     ArrayList<Projectile> projectiles;
 
     public Player() {
         projectiles = new ArrayList<>();
         setupImageView();
-    }
-
-    public void update() {
-        updateProjectiles();
+        startPlayerThread();
+        health = maxHealth;
     }
 
     public ImageView getShipView() {
@@ -69,23 +69,48 @@ public class Player {
         }
     }
 
-    private void updateProjectiles() {
+    private void calculateProjectilePosition() {
         for (int i = 0; i < projectiles.size(); i++) {
             Projectile projectile = projectiles.get(i);
-            if (projectile.outOfBounds()) {
-                Game.getGameWorld().getChildren().remove(projectile.getProjectileView());
-                projectiles.remove(i);
-                i--;
-            }
+
             projectile.calculatePosition();
-            projectile.updatePosition();
 
         }
 
     }
 
+    private void startPlayerThread() {
+        Thread playerThread = new Thread(() -> {
+            while (true) {
+                calculateProjectilePosition();
+                Platform.runLater(() -> {
+                    for (int i = 0; i < projectiles.size(); i++) {
+                        Projectile projectile = projectiles.get(i);
+                        projectile.updatePosition();
+                        if (projectile.outOfBounds()) {
+                            Game.getGameWorld().getChildren().remove(projectile.getProjectileView());
+                            projectiles.remove(i);
+                            i--;
+
+                        }
+                    }
+
+                });
+                try {
+                    Thread.sleep(10); // 60 FPS
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        playerThread.setDaemon(true);
+        playerThread.start();
+
+    }
+
     public void takeDamage(double damage) {
         health -= damage;
+        GameController.updateHealth(health, maxHealth);
     }
 
     public ArrayList<Projectile> getProjectiles() {

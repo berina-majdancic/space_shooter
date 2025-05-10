@@ -50,7 +50,6 @@ public class GameController {
 
     public void update() {
         updateDeltaTime();
-        player.update();
         updateEnemies();
         handleContinuousMovement();
         handleInstantActions();
