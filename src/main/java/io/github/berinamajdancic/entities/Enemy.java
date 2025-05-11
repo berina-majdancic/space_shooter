@@ -3,7 +3,6 @@ package io.github.berinamajdancic.entities;
 import java.util.ArrayList;
 
 import io.github.berinamajdancic.Game;
-import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -28,7 +27,6 @@ public class Enemy {
         randomizePosition();
         setupImageView();
         projectiles = new ArrayList<>();
-        startEnemyBehavior();
         Game.getGameWorld().getChildren().add(shipView);
 
     }
@@ -152,27 +150,4 @@ public class Enemy {
         return projectiles;
     }
 
-    private void startEnemyBehavior() {
-
-        Thread thread = new Thread(() -> {
-            while (!isDead() && !isOutOfBounds() && !Thread.currentThread().isInterrupted()) {
-                update();
-                Platform.runLater(() -> {
-                    // Handle collision results (e.g., remove projectiles or enemies)
-                    shoot();
-                    updatePosition();
-                    updateProjectilePosition();
-
-                });
-                try {
-                    Thread.sleep(10); // Adjust the sleep time as needed
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt(); // Restore the interrupted status
-                }
-
-            }
-        });
-        thread.setDaemon(true);
-        thread.start();
-    }
 }

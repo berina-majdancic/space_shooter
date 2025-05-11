@@ -11,6 +11,7 @@ import io.github.berinamajdancic.Game;
 import io.github.berinamajdancic.entities.Enemy;
 import io.github.berinamajdancic.entities.Player;
 import io.github.berinamajdancic.entities.Projectile;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -38,6 +39,7 @@ public class GameController {
         enemies.add(new Enemy());
         this.stage = stage;
         setupGame();
+        startEnemyBehavior();
     }
 
     private void setupGame() {
@@ -202,4 +204,29 @@ public class GameController {
         thread.start();
     }
 
+    private void startEnemyBehavior() {
+
+        Thread thread = new Thread(() -> {
+            while (!Thread.currentThread().isInterrupted()) {
+                for (int i = 0; i < enemies.size(); i++) {
+                    Enemy enemy = enemies.get(i);
+                    enemy.update();
+                    Platform.runLater(() -> {
+                        // Handle collision results (e.g., remove projectiles or enemies)
+                        enemy.shoot();
+                        enemy.updatePosition();
+                        enemy.updateProjectilePosition();
+                    });
+                }
+                try {
+                    Thread.sleep(10); // Adjust the sleep time as needed
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt(); // Restore the interrupted status
+                }
+
+            }
+        });
+        thread.setDaemon(true);
+        thread.start();
+    }
 }
