@@ -12,7 +12,7 @@ import javafx.scene.image.ImageView;
 public class Player {
     private Image shipImage;
     private ImageView shipView;
-    private double fireRate = 100_000_000;
+    private double fireRate = 200_000_000;
     private double x = 160, y = 128;
     private long lastShotTime = 0;
     private int score = 0;
@@ -21,6 +21,7 @@ public class Player {
     private final double speed = 2.0;
     private final int maxHealth = 1000;
     private final GameController gameController;
+    private boolean isDead = false;
     ArrayList<Projectile> projectiles;
 
     public Player(GameController gameController) {
@@ -36,8 +37,13 @@ public class Player {
         return shipView;
     }
 
+    public boolean isDead() {
+        return isDead;
+    }
+
     private void setupImageView() {
-        InputStream inputStream = getClass().getResourceAsStream("/io/github/berinamajdancic/images/ship.png");
+        InputStream inputStream =
+                getClass().getResourceAsStream("/io/github/berinamajdancic/images/ship.png");
         shipImage = new Image(inputStream);
         shipView = new ImageView(shipImage);
         shipView.setFitWidth(width);
@@ -62,7 +68,7 @@ public class Player {
     public void shoot() {
         long currentTime = System.nanoTime();
         if (currentTime - lastShotTime >= fireRate) {
-            Projectile projectile = new Projectile(x + width / 2 - 7, y, 30, 0, 800);
+            Projectile projectile = new Projectile(x + width / 2 - 7, y, 30, 0, 800, false);
             projectiles.add(projectile);
             lastShotTime = currentTime;
         }
@@ -90,7 +96,8 @@ public class Player {
                             Projectile projectile = projectiles.get(i);
                             projectile.updatePosition();
                             if (projectile.outOfBounds()) {
-                                Game.getGameWorld().getChildren().remove(projectile.getProjectileView());
+                                Game.getGameWorld().getChildren()
+                                        .remove(projectile.getProjectileView());
                                 projectiles.remove(i);
                                 i--;
                             }
@@ -117,7 +124,7 @@ public class Player {
     public void takeDamage(double damage) {
         health -= damage;
         if (health <= 0) {
-            die();
+            isDead = true;
         }
         gameController.updateHealth(health, maxHealth);
     }
@@ -128,9 +135,9 @@ public class Player {
 
     public void addScore(int score) {
         this.score += score;
-        if (score % 1000 == 0) {
+        if (score % 500 == 0) {
             health += 100;
-            fireRate -= 500_000;
+            fireRate -= 100_000;
         }
         gameController.updateScore(this.score);
     }
