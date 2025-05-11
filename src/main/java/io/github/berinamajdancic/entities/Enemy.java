@@ -11,7 +11,7 @@ public class Enemy {
     private double speed = 1;
     private static Image shipImage;
     private ImageView shipView;
-    private int health = 200;
+    private int health = 120;
     private double x = 600, y = 100;
     private final double width = 100, height = 100;
     private final double fireRate = 2_000_000_000;
@@ -110,7 +110,7 @@ public class Enemy {
 
     public void shoot() {
         long currentTime = System.nanoTime();
-        if (currentTime - lastShotTime >= fireRate) {
+        if ((currentTime - lastShotTime) >= fireRate * 3) {
             Projectile projectile2 = new Projectile(x + shipCenter + 8, y + height, 30, 150, -150);
             Projectile projectile3 = new Projectile(x + shipCenter - 8, y + height, 30, -150, -150);
 

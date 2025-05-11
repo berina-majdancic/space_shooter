@@ -65,6 +65,9 @@ public class GameController {
             if (enemy.isDead()) {
                 player.addScore(100);
                 updateScore(player.getScore());
+                if (player.getScore() % 1000 == 0) {
+                    enemies.add(new Enemy());
+                }
             }
             if (enemy.isOutOfBounds() || enemy.isDead()) {
                 enemy.removeEnemy();
@@ -194,9 +197,9 @@ public class GameController {
             while (!enemies.isEmpty() && !Thread.currentThread().isInterrupted()) {
                 handleCollisions();
                 try {
-                    Thread.sleep(10); // Adjust the sleep time as needed
+                    Thread.sleep(10);
                 } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt(); // Restore the interrupted status
+                    Thread.currentThread().interrupt();
                 }
             }
         });
@@ -212,16 +215,15 @@ public class GameController {
                     Enemy enemy = enemies.get(i);
                     enemy.update();
                     Platform.runLater(() -> {
-                        // Handle collision results (e.g., remove projectiles or enemies)
                         enemy.shoot();
                         enemy.updatePosition();
                         enemy.updateProjectilePosition();
                     });
                 }
                 try {
-                    Thread.sleep(10); // Adjust the sleep time as needed
+                    Thread.sleep(10);
                 } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt(); // Restore the interrupted status
+                    Thread.currentThread().interrupt();
                 }
 
             }
@@ -229,4 +231,9 @@ public class GameController {
         thread.setDaemon(true);
         thread.start();
     }
+
+    public static void gameOver() {
+
+    }
+
 }

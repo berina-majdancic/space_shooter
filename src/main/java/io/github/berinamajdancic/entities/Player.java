@@ -11,7 +11,7 @@ import javafx.scene.image.ImageView;
 
 public class Player {
     private final double width = 150, height = 150;
-    private final double fireRate = 100_000_000;
+    private double fireRate = 100_000_000;
     private final double speed = 3.0;
     private Image shipImage;
     private ImageView shipView;
@@ -19,7 +19,7 @@ public class Player {
     private long lastShotTime = 0;
     private int score = 0;
     private int health;
-    private int maxHealth = 500;
+    private int maxHealth = 1000;
 
     ArrayList<Projectile> projectiles;
 
@@ -110,6 +110,9 @@ public class Player {
 
     public void takeDamage(double damage) {
         health -= damage;
+        if (health <= 0) {
+            die();
+        }
         GameController.updateHealth(health, maxHealth);
     }
 
@@ -119,6 +122,10 @@ public class Player {
 
     public void addScore(int score) {
         this.score += score;
+        if (score % 1000 == 0) {
+            health += 100;
+            fireRate -= 500_000;
+        }
     }
 
     public int getScore() {
@@ -131,6 +138,10 @@ public class Player {
 
     public int getMaxHealth() {
         return maxHealth;
+    }
+
+    private void die() {
+        // GameController.GameOver();
     }
 
 }
