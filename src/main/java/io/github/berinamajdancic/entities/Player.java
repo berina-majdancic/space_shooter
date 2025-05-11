@@ -10,16 +10,16 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class Player {
-    private final double width = 150, height = 150;
-    private double fireRate = 100_000_000;
-    private final double speed = 2.0;
     private Image shipImage;
     private ImageView shipView;
+    private double fireRate = 100_000_000;
     private double x = 160, y = 128;
     private long lastShotTime = 0;
     private int score = 0;
     private int health;
-    private int maxHealth = 1000;
+    private final double width = 150, height = 150;
+    private final double speed = 2.0;
+    private final int maxHealth = 1000;
     private final GameController gameController;
     ArrayList<Projectile> projectiles;
 
@@ -75,13 +75,12 @@ public class Player {
             projectile.calculatePosition();
 
         }
-
     }
 
     private void startPlayerThread() {
         Thread playerThread = new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) {
-                if (!GameController.isGamePaused()) {
+                if (!gameController.isGamePaused()) {
                     gameController.handleContinuousMovement();
                     calculateProjectilePosition();
                     Platform.runLater(() -> {
@@ -120,7 +119,7 @@ public class Player {
         if (health <= 0) {
             die();
         }
-        GameController.updateHealth(health, maxHealth);
+        gameController.updateHealth(health, maxHealth);
     }
 
     public ArrayList<Projectile> getProjectiles() {
@@ -133,6 +132,7 @@ public class Player {
             health += 100;
             fireRate -= 500_000;
         }
+        gameController.updateScore(this.score);
     }
 
     public int getScore() {

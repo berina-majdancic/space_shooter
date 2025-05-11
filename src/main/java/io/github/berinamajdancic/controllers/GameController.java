@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import io.github.berinamajdancic.App;
 import io.github.berinamajdancic.DatabaseManager;
 import io.github.berinamajdancic.Game;
 import io.github.berinamajdancic.entities.Enemy;
@@ -13,28 +12,22 @@ import io.github.berinamajdancic.entities.Player;
 import io.github.berinamajdancic.entities.Projectile;
 import javafx.application.Platform;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.input.KeyCode;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 public class GameController {
-    private final Set<KeyCode> activeKeys = new HashSet<>();
-    private static Player player;
-    private ArrayList<Enemy> enemies;
-    private static final double movementSpeed = 300;
-    private static Stage stage;
+    private final Game game;
+    private final Player player;
+    private final Stage stage;
+    private final DatabaseManager databaseManager;
+    private final double movementSpeed = 300;
     private static double deltaTime = 0;
     private double lastUpdateTime = 0;
-    private DatabaseManager databaseManager;
-    private static Label scoreLabel;
-    private static ProgressBar healthBar;
-    private static boolean isGamePaused = false;
+    private boolean isGamePaused = false;
+    private final ArrayList<Enemy> enemies;
+    private final Set<KeyCode> activeKeys = new HashSet<>();
 
-    public GameController(Stage stage) throws IOException {
+    public GameController(Stage stage, Game game, DatabaseManager databaseManager) throws IOException {
         databaseManager = new DatabaseManager();
         player = new Player(this);
         enemies = new ArrayList<>();
@@ -42,24 +35,29 @@ public class GameController {
         enemies.add(new Enemy());
         enemies.add(new Enemy());
         this.stage = stage;
+        this.game = game;
+        this.databaseManager = databaseManager;
         setupGame();
         startEnemyBehavior();
         startCollisionThread();
     }
 
-    public static boolean isGamePaused() {
+    public DatabaseManager getDatabaseManager() {
+        return databaseManager;
+    }
+
+    public boolean isGamePaused() {
         return isGamePaused;
     }
 
-    public static void setGamePaused(boolean isGamePaused) {
-        GameController.isGamePaused = isGamePaused;
+    public void setGamePaused(boolean isGamePaused) {
+        this.isGamePaused = isGamePaused;
     }
 
     private void setupGame() {
         Game.getGameWorld().getChildren().add(player.getShipView());
-        setupHUD();
         stage.show();
-        App.getGameRoot().requestFocus();
+        game.getGameRoot().requestFocus();
         setupInputHandlers(stage.getScene());
     }
 
@@ -77,7 +75,6 @@ public class GameController {
             Enemy enemy = enemies.get(i);
             if (enemy.isDead()) {
                 player.addScore(100);
-                updateScore(player.getScore());
                 if (player.getScore() % 1000 == 0) {
                     enemies.add(new Enemy());
                 }
@@ -108,8 +105,8 @@ public class GameController {
     private void handleInstantActions() {
         if (activeKeys.contains(KeyCode.ESCAPE)) {
             isGamePaused = true;
-            Game.pauseGame();
-            Game.showPauseMenu();
+            game.pauseGame();
+            game.showPauseMenu();
         }
     }
 
@@ -169,12 +166,12 @@ public class GameController {
 
     }
 
-    public static void updateHealth(double health, double maxHealth) {
-        healthBar.setProgress(health / maxHealth);
+    public void updateHealth(double health, double maxHealth) {
+        game.updateHealthBar(health, maxHealth);
     }
 
-    public static void updateScore(int score) {
-        scoreLabel.setText("Score: " + score);
+    public void updateScore(int score) {
+        game.updateScore(score);
     }
 
     private void startCollisionThread() {
@@ -221,58 +218,8 @@ public class GameController {
     }
 
     public void gameOver() {
-        Game.pauseGame();
+        game.pauseGame();
         databaseManager.saveScore(player.getScore());
     }
 
-    public static void showGameOverScreen() {
-        Rectangle overlay = new Rectangle();
-        overlay.setWidth(stage.getScene().getWidth());
-        overlay.setHeight(stage.getScene().getHeight());
-        overlay.setFill(Color.rgb(0, 0, 0, 0.5));
-        Game.getGameWorld().getChildren().add(overlay);
-
-        Label gameOverLabel = new Label("Game Over");
-        gameOverLabel.getStyleClass().add("game-over-label");
-        gameOverLabel.setTranslateX(stage.getScene().getWidth() / 2 - 100);
-        gameOverLabel.setTranslateY(stage.getScene().getHeight() / 2 - 50);
-        Game.getHud().getChildren().add(gameOverLabel);
-
-        Button restartButton = new Button("Restart");
-        restartButton.getStyleClass().add("button");
-        restartButton.setTranslateX(stage.getScene().getWidth() / 2 - 50);
-        restartButton.setTranslateY(stage.getScene().getHeight() / 2 + 10);
-
-        restartButton.setOnAction(e -> {
-            System.err.println("Restarting game...");
-            try {
-                App.restartGame();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        });
-        Game.getHud().getChildren().add(restartButton);
-    }
-
-    private void setupHUD() {
-
-        scoreLabel = new Label("Score: 0");
-        scoreLabel.setStyle("-fx-font-style: -fx-font-size: 20px; -fx-text-fill: white;");
-        scoreLabel.setTranslateX(10);
-        scoreLabel.setTranslateY(10);
-        scoreLabel.setText("Score: " + player.getScore());
-        Game.getHud().getChildren().add(scoreLabel);
-
-        Scene scene = App.getGameRoot().getScene();
-
-        healthBar = new ProgressBar();
-        healthBar.setPrefWidth(200);
-        healthBar.setStyle("-fx-accent: purple; -fx-border-style: none;");
-        if (scene != null)
-            healthBar.setTranslateX(scene.getWidth() - 220);
-        healthBar.setTranslateY(20);
-        healthBar.setProgress(player.getHealth() / player.getMaxHealth());
-        Game.getHud().getChildren().add(healthBar);
-
-    }
 }

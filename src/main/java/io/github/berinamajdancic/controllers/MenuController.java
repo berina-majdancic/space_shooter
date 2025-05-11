@@ -12,6 +12,16 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 public class MenuController {
+    private static DatabaseManager databaseManager;
+    private static App app;
+
+    public static void setDataBaseManager(DatabaseManager databaseManager) {
+        MenuController.databaseManager = databaseManager;
+    }
+
+    public static void setApp(App app) {
+        MenuController.app = app;
+    }
 
     @FXML
     private TextField usernameField;
@@ -21,17 +31,17 @@ public class MenuController {
 
     @FXML
     private void resumeGame() throws IOException {
-        App.resumeGame();
+        app.resumeGame();
     }
 
     @FXML
     private void startGame() throws IOException {
-        App.startGame();
+        app.startGame();
     }
 
     @FXML
     private void restartGame() throws IOException {
-        App.restartGame();
+        app.restartGame();
     }
 
     @FXML
@@ -41,17 +51,17 @@ public class MenuController {
 
     @FXML
     private void showRegisterPage() throws IOException {
-        App.showRegisterPage();
+        app.showRegisterPage();
     }
 
     @FXML
     private void showLoginPage() throws IOException {
-        App.showLoginPage();
+        app.showLoginPage();
     }
 
     @FXML
     private void showMainMenu() throws IOException {
-        App.showMainMenu();
+        app.showMainMenu();
     }
 
     @FXML
@@ -66,8 +76,8 @@ public class MenuController {
             alert.setContentText("Username or password cannot be empty.");
             alert.showAndWait();
         } else {
-            DatabaseManager.Register(username, password);
-            App.showMainMenu();
+            databaseManager.Register(username, password);
+            app.showMainMenu();
 
         }
     }
@@ -84,14 +94,14 @@ public class MenuController {
             alert.setContentText("Username or password cannot be empty.");
             alert.showAndWait();
         } else {
-            DatabaseManager.login(username, password);
-            App.showMainMenu();
+            databaseManager.login(username, password);
+            app.showMainMenu();
 
         }
     }
 
     @FXML
     private void handleCancel() throws IOException {
-        App.showMainMenu();
+        app.showMainMenu();
     }
 }

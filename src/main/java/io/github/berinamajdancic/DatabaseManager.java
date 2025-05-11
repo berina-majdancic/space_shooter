@@ -7,21 +7,23 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DatabaseManager {
-    private static final String URL = "jdbc:mysql://localhost:1443/space_shooter";
-    private static final String USER = "javafx_user";
-    private static final String PASSWORD = "your_password";
+    private final String URL = "jdbc:mysql://localhost:1443/space_shooter";
+    private final String USER = "javafx_user";
+    private final String PASSWORD = "your_password";
+    private String username = "player";
+    private boolean isLoggedIn = false;
 
-    public static Connection getConnection() throws SQLException {
+    public Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
-    public void saveScore(String playerName, int score) {
+    public void saveScore(int score) {
         String query = "INSERT INTO players (username, high_score) VALUES (?, ?) ON DUPLICATE KEY UPDATE high_score = GREATEST(high_score, ?)";
 
-        try (Connection conn = DatabaseManager.getConnection();
+        try (Connection conn = getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setString(1, playerName);
+            stmt.setString(1, username);
             stmt.setInt(2, score);
             stmt.setInt(3, score);
             stmt.executeUpdate();
@@ -31,9 +33,9 @@ public class DatabaseManager {
         }
     }
 
-    public static void Register(String username, String password) {
+    public void Register(String username, String password) {
         String query = "INSERT INTO players (username, password) VALUES (?, ?)";
-        try (Connection conn = DatabaseManager.getConnection();
+        try (Connection conn = getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, username);
@@ -51,9 +53,9 @@ public class DatabaseManager {
         }
     }
 
-    public static void login(String username, String password) {
+    public void login(String username, String password) {
         String query = "SELECT * FROM players WHERE username = ? AND password = ?";
-        try (Connection conn = DatabaseManager.getConnection();
+        try (Connection conn = getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, username);
@@ -62,6 +64,8 @@ public class DatabaseManager {
 
             if (rs.next()) {
                 System.out.println("Login successful!");
+                this.username = username;
+                this.isLoggedIn = true;
             } else {
                 System.out.println("Invalid username or password.");
             }

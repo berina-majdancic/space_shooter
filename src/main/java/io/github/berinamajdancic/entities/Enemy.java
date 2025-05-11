@@ -8,7 +8,7 @@ import javafx.scene.image.ImageView;
 
 public class Enemy {
 
-    private double speed = 1;
+    private final double speed = 1;
     private static Image shipImage;
     private ImageView shipView;
     private int health = 120;
@@ -18,9 +18,9 @@ public class Enemy {
     private final double moveRate = 1_000_000;
     private long lastShotTime = 0;
     private boolean isOutOfBounds = false;
+    private boolean isDead = false;
     private long lastMoveTime = 0;
-    private boolean isDead = true;
-    private ArrayList<Projectile> projectiles;
+    private final ArrayList<Projectile> projectiles;
     private final double shipCenter = width / 2 - 7;
 
     public Enemy() {
@@ -38,7 +38,7 @@ public class Enemy {
     }
 
     public boolean isDead() {
-        return health <= 0;
+        return isDead;
     }
 
     public boolean isOutOfBounds() {
@@ -66,10 +66,6 @@ public class Enemy {
     public void update() {
         calculatePosition();
         calculateProjectilePosition();
-        // shoot();
-        //updatePosition();
-        // updateProjectiles();
-        //
     }
 
     public ImageView getShipView() {

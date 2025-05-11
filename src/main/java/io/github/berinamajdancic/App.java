@@ -2,6 +2,7 @@ package io.github.berinamajdancic;
 
 import java.io.IOException;
 
+import io.github.berinamajdancic.controllers.MenuController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -15,41 +16,45 @@ import javafx.stage.Stage;
  */
 public class App extends Application {
 
-    private static Stage primaryStage;
-    private static Scene scene;
-    private static Pane gameRoot;
-    private static Game game;
+    private Stage primaryStage;
+    private Scene scene;
+    private Pane gameRoot;
+    private Game game;
+    private DatabaseManager databaseManager;
 
     @Override
     public void start(Stage stage) throws IOException {
         primaryStage = stage;
+        databaseManager = new DatabaseManager();
         setupStage();
         gameRoot = new Pane();
         scene = new Scene(gameRoot);
         primaryStage.setScene(scene);
         showMainMenu();
         primaryStage.show();
+        MenuController.setApp(this);
+        MenuController.setDataBaseManager(databaseManager);
     }
 
-    public static void showMainMenu() throws IOException {
+    public void showMainMenu() throws IOException {
         setRoot("ui/main_menu");
     }
 
-    public static void showLoginPage() throws IOException {
+    public void showLoginPage() throws IOException {
         setRoot("ui/login");
     }
 
-    public static void showRegisterPage() throws IOException {
+    public void showRegisterPage() throws IOException {
         setRoot("ui/register");
     }
 
-    public static void setRoot(String fxml) throws IOException {
+    public void setRoot(String fxml) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
         gameRoot = fxmlLoader.load();
         primaryStage.getScene().setRoot(gameRoot);
     }
 
-    public static Parent getGameRoot() {
+    public Parent getGameRoot() {
         return primaryStage.getScene().getRoot();
     }
 
@@ -60,27 +65,27 @@ public class App extends Application {
         primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
     }
 
-    public static void startGame() throws IOException {
-        game = new Game(primaryStage);
+    public void startGame() throws IOException {
+        game = new Game(primaryStage, this, databaseManager);
         game.start();
     }
 
-    public static void showPauseMenu() throws IOException {
+    public void showPauseMenu() throws IOException {
         try {
-            App.setRoot("ui/pause_menu");
+            setRoot("ui/pause_menu");
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void restartGame() throws IOException {
+    public void restartGame() throws IOException {
         game.deleteGame();
         game = null;
         startGame();
     }
 
-    public static void resumeGame() throws IOException {
+    public void resumeGame() throws IOException {
         game.resumeGame();
     }
 
