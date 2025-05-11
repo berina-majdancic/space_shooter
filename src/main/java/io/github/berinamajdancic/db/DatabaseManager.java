@@ -1,10 +1,14 @@
-package io.github.berinamajdancic;
+package io.github.berinamajdancic.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class DatabaseManager {
     private final String URL = "jdbc:mysql://localhost:1443/space_shooter";
@@ -18,7 +22,8 @@ public class DatabaseManager {
     }
 
     public void saveScore(int score) {
-        String query = "INSERT INTO players (username, high_score) VALUES (?, ?) ON DUPLICATE KEY UPDATE high_score = GREATEST(high_score, ?)";
+        String query =
+                "INSERT INTO players (username, high_score) VALUES (?, ?) ON DUPLICATE KEY UPDATE high_score = GREATEST(high_score, ?)";
 
         try (Connection conn = getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -73,5 +78,26 @@ public class DatabaseManager {
         } catch (SQLException e) {
             System.err.println("Database error: " + e.getMessage());
         }
+    }
+
+    public ObservableList<LeaderboardEntry> getLeaderboardData() {
+        List<LeaderboardEntry> leaderboard = new ArrayList<>();
+        String query =
+                "SELECT RANK() OVER (ORDER BY score DESC) AS rank, username, score FROM leaderboard";
+        try (PreparedStatement statement = getConnection().prepareStatement(query);
+                ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+                int rank = resultSet.getInt("rank");
+                String username = resultSet.getString("player_name");
+                int score = resultSet.getInt("score");
+
+                leaderboard.add(new LeaderboardEntry(username, rank, score));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching leaderboard data: " + e.getMessage());
+        }
+        ObservableList<LeaderboardEntry> data = FXCollections.observableArrayList(leaderboard);
+        return data;
     }
 }

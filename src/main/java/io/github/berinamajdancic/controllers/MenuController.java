@@ -3,17 +3,36 @@ package io.github.berinamajdancic.controllers;
 import java.io.IOException;
 
 import io.github.berinamajdancic.App;
-import io.github.berinamajdancic.DatabaseManager;
+import io.github.berinamajdancic.db.DatabaseManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.cell.PropertyValueFactory;
+
+import io.github.berinamajdancic.db.LeaderboardEntry;
 
 public class MenuController {
     private static DatabaseManager databaseManager;
     private static App app;
+
+    @FXML
+    private TableView<LeaderboardEntry> leaderboardTable;
+    @FXML
+    private TableColumn<LeaderboardEntry, Integer> rankColumn;
+    @FXML
+    private TableColumn<LeaderboardEntry, String> usernameColumn;
+    @FXML
+    private TableColumn<LeaderboardEntry, Integer> scoreColumn;
+
+    @FXML
+    private TextField usernameField;
+    @FXML
+    private PasswordField passwordField;
 
     public static void setDataBaseManager(DatabaseManager databaseManager) {
         MenuController.databaseManager = databaseManager;
@@ -22,12 +41,6 @@ public class MenuController {
     public static void setApp(App app) {
         MenuController.app = app;
     }
-
-    @FXML
-    private TextField usernameField;
-
-    @FXML
-    private PasswordField passwordField;
 
     @FXML
     private void resumeGame() throws IOException {
@@ -103,5 +116,20 @@ public class MenuController {
     @FXML
     private void handleCancel() throws IOException {
         app.showMainMenu();
+    }
+
+    @FXML
+    private void showLeaderboard() throws IOException {
+        app.showLeaderboard();
+    }
+
+    @FXML
+    public void initialize() {
+
+        // rankColumn.setCellValueFactory(new PropertyValueFactory<>("rank"));
+        // usernameColumn.setCellValueFactory(new PropertyValueFactory<>("username"));
+        // scoreColumn.setCellValueFactory(new PropertyValueFactory<>("score"));
+        // leaderboardTable.setItems(databaseManager.getLeaderboardData());
+
     }
 }

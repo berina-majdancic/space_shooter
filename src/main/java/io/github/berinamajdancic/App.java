@@ -3,6 +3,7 @@ package io.github.berinamajdancic;
 import java.io.IOException;
 
 import io.github.berinamajdancic.controllers.MenuController;
+import io.github.berinamajdancic.db.DatabaseManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -74,6 +75,14 @@ public class App extends Application {
         try {
             setRoot("ui/pause_menu");
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showLeaderboard() throws IOException {
+        try {
+            setRoot("ui/leaderboard");
         } catch (IOException e) {
             e.printStackTrace();
         }
