@@ -12,15 +12,28 @@ public class Projectile {
     private double x, y;
     private boolean outOfBounds;
     private final int damage;
-    private static Image bulletImage;
+    private static Image enemyBulletImage;
+    private static Image playerBulletImage;
     private ImageView bulletImageView;
 
-    public Projectile(double x, double y, int damage, double speedX, double speedY) {
-        if (bulletImage == null) {
-            bulletImage = new Image(getClass().getResourceAsStream("/io/github/berinamajdancic/images/flare.png"));
-        }
-        if (bulletImage != null) {
-            bulletImageView = new ImageView(bulletImage);
+    public Projectile(double x, double y, int damage, double speedX, double speedY,
+            boolean isEnemyBullet) {
+        if (isEnemyBullet) {
+            if (enemyBulletImage == null) {
+                enemyBulletImage = new Image(getClass()
+                        .getResourceAsStream("/io/github/berinamajdancic/images/flare.png"));
+            }
+            if (enemyBulletImage != null) {
+                bulletImageView = new ImageView(enemyBulletImage);
+            }
+        } else {
+            if (playerBulletImage == null) {
+                playerBulletImage = new Image(getClass()
+                        .getResourceAsStream("/io/github/berinamajdancic/images/laser.png"));
+            }
+            if (playerBulletImage != null) {
+                bulletImageView = new ImageView(playerBulletImage);
+            }
         }
         this.x = x;
         this.y = y;
