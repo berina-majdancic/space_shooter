@@ -19,16 +19,17 @@ import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
 public class GameController {
-    private final Set<KeyCode> activeKeys = new HashSet<>();
-    private final Player player;
+    private static final Set<KeyCode> activeKeys = new HashSet<>();
+    private static Player player;
     private ArrayList<Enemy> enemies;
-    private final double movementSpeed = 300;
+    private static final double movementSpeed = 300;
     private final Stage stage;
     private static double deltaTime = 0;
     private double lastUpdateTime = 0;
     private DatabaseManager databaseManager;
     private static Label scoreLabel;
     private static ProgressBar healthBar;
+    private static boolean isGamePaused = false;
 
     public GameController(Stage stage) throws IOException {
         databaseManager = new DatabaseManager();
@@ -40,6 +41,15 @@ public class GameController {
         this.stage = stage;
         setupGame();
         startEnemyBehavior();
+        startCOllisionThread();
+    }
+
+    public static boolean isGamePaused() {
+        return isGamePaused;
+    }
+
+    public static void setGamePaused(boolean isGamePaused) {
+        GameController.isGamePaused = isGamePaused;
     }
 
     private void setupGame() {
@@ -51,11 +61,11 @@ public class GameController {
     }
 
     public void update() {
-        updateDeltaTime();
-        updateEnemies();
-        handleContinuousMovement();
-        handleInstantActions();
-
+        if (!isGamePaused) {
+            updateDeltaTime();
+            updateEnemies();
+            handleInstantActions();
+        }
     }
 
     private void updateEnemies() {
@@ -68,8 +78,13 @@ public class GameController {
                 if (player.getScore() % 1000 == 0) {
                     enemies.add(new Enemy());
                 }
-            }
-            if (enemy.isOutOfBounds() || enemy.isDead()) {
+                enemy.removeEnemy();
+                Game.getGameWorld().getChildren().remove(enemy.getShipView());
+                enemies.remove(i);
+                i--;
+                enemies.add(new Enemy());
+            } else if (enemy.isOutOfBounds()) {
+                player.takeDamage(100);
                 enemy.removeEnemy();
                 Game.getGameWorld().getChildren().remove(enemy.getShipView());
                 enemies.remove(i);
@@ -89,18 +104,12 @@ public class GameController {
 
     private void handleInstantActions() {
         if (activeKeys.contains(KeyCode.ESCAPE)) {
-            try {
-                App.showPauseMenu();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        if (activeKeys.contains(KeyCode.SPACE)) {
-            player.shoot();
+            isGamePaused = true;
+            Game.pauseGame();
         }
     }
 
-    private void handleContinuousMovement() {
+    public static void handleContinuousMovement() {
         double dx = 0, dy = 0;
         if (activeKeys.contains(KeyCode.A) || activeKeys.contains(KeyCode.LEFT))
             dx -= movementSpeed * deltaTime;
@@ -186,16 +195,11 @@ public class GameController {
         scoreLabel.setText("Score: " + score);
     }
 
-    private void killEnemy() {
-        // enemy = null;
-        player.addScore(100);
-        updateScore(player.getScore());
-    }
-
     public void startCOllisionThread() {
         Thread thread = new Thread(() -> {
             while (!enemies.isEmpty() && !Thread.currentThread().isInterrupted()) {
-                handleCollisions();
+                if (!isGamePaused)
+                    handleCollisions();
                 try {
                     Thread.sleep(10);
                 } catch (InterruptedException e) {
@@ -211,14 +215,17 @@ public class GameController {
 
         Thread thread = new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) {
-                for (int i = 0; i < enemies.size(); i++) {
-                    Enemy enemy = enemies.get(i);
-                    enemy.update();
-                    Platform.runLater(() -> {
-                        enemy.shoot();
-                        enemy.updatePosition();
-                        enemy.updateProjectilePosition();
-                    });
+                if (!isGamePaused) {
+
+                    for (int i = 0; i < enemies.size(); i++) {
+                        Enemy enemy = enemies.get(i);
+                        enemy.update();
+                        Platform.runLater(() -> {
+                            enemy.shoot();
+                            enemy.updatePosition();
+                            enemy.updateProjectilePosition();
+                        });
+                    }
                 }
                 try {
                     Thread.sleep(10);
@@ -233,7 +240,11 @@ public class GameController {
     }
 
     public static void gameOver() {
-
+        Label gameOverLabel = new Label("Game Over");
+        gameOverLabel.setStyle("-fx-font-size: 50px; -fx-text-fill: white;");
+        gameOverLabel.setTranslateX(300);
+        gameOverLabel.setTranslateY(200);
+        Game.getGameWorld().getChildren().add(gameOverLabel);
     }
 
 }

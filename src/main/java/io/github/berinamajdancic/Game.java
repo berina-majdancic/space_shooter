@@ -66,13 +66,15 @@ public class Game {
 
     public void resumeGame() {
         stage.getScene().setRoot(root);
-        start();
+        GameController.setGamePaused(false);
+        stage.getScene().setRoot(root);
+        gameLoop.start();
+
     }
 
     public void start() {
         stage.getScene().setRoot(root);
         SetupGameLoop();
-        gameController.startCOllisionThread();
         gameLoop.start();
     }
 
@@ -95,4 +97,13 @@ public class Game {
         return root;
     }
 
+    public static void pauseGame() {
+        try {
+            App.showPauseMenu();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        gameLoop.stop();
+        GameController.setGamePaused(true);
+    }
 }
