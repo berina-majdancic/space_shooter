@@ -3,7 +3,8 @@ package io.github.berinamajdancic;
 import java.io.IOException;
 
 import io.github.berinamajdancic.controllers.GameController;
-import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -20,10 +21,13 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class Game {
-    private AnimationTimer gameLoop;
+    // private AnimationTimer gameLoop;
     private final GameController gameController;
+    private Timeline gameLoop;
+    private static final double FRAME_RATE = 60.0;
     private final App app;
     private final Stage stage;
     private static StackPane root;
@@ -31,7 +35,8 @@ public class Game {
     private static Pane hud;
     private Label scoreLabel;
     private ProgressBar healthBar;
-    private static final String BACKGROUND_PATH = "/io/github/berinamajdancic/images/stars_background.jpg";
+    private static final String BACKGROUND_PATH =
+            "/io/github/berinamajdancic/images/stars_background.jpg";
 
     public Game(Stage stage, App app, DatabaseManager databaseManager) throws IOException {
         this.stage = stage;
@@ -61,12 +66,10 @@ public class Game {
     }
 
     private void SetupGameLoop() {
-        gameLoop = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                gameController.update();
-            }
-        };
+        gameLoop = new Timeline(new KeyFrame(Duration.seconds(1.0 / FRAME_RATE), event -> {
+            gameController.update();
+        }));
+        gameLoop.setCycleCount(Timeline.INDEFINITE);
     }
 
     private void setupGame() {
@@ -88,14 +91,14 @@ public class Game {
     public void resumeGame() {
         gameController.setGamePaused(false);
         stage.getScene().setRoot(root);
-        gameLoop.start();
+        gameLoop.play();
 
     }
 
     public void start() {
         stage.getScene().setRoot(root);
         SetupGameLoop();
-        gameLoop.start();
+        gameLoop.play();
     }
 
     public static Pane getHud() {
