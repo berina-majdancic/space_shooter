@@ -12,7 +12,7 @@ import javafx.scene.image.ImageView;
 public class Player {
     private final double width = 150, height = 150;
     private double fireRate = 100_000_000;
-    private final double speed = 3.0;
+    private final double speed = 2.0;
     private Image shipImage;
     private ImageView shipView;
     private double x = 160, y = 128;
@@ -20,10 +20,11 @@ public class Player {
     private int score = 0;
     private int health;
     private int maxHealth = 1000;
-
+    private final GameController gameController;
     ArrayList<Projectile> projectiles;
 
-    public Player() {
+    public Player(GameController gameController) {
+        this.gameController = gameController;
         projectiles = new ArrayList<>();
         setupImageView();
         startPlayerThread();
@@ -56,8 +57,6 @@ public class Player {
                 y = newY;
             }
         }
-        shipView.setTranslateX(x);
-        shipView.setTranslateY(y);
     }
 
     public void shoot() {
@@ -81,21 +80,24 @@ public class Player {
 
     private void startPlayerThread() {
         Thread playerThread = new Thread(() -> {
-            while (true) {
-                calculateProjectilePosition();
-                Platform.runLater(() -> {
-                    for (int i = 0; i < projectiles.size(); i++) {
-                        Projectile projectile = projectiles.get(i);
-                        projectile.updatePosition();
-                        if (projectile.outOfBounds()) {
-                            Game.getGameWorld().getChildren().remove(projectile.getProjectileView());
-                            projectiles.remove(i);
-                            i--;
-
+            while (!Thread.currentThread().isInterrupted()) {
+                if (!GameController.isGamePaused()) {
+                    gameController.handleContinuousMovement();
+                    calculateProjectilePosition();
+                    Platform.runLater(() -> {
+                        shoot();
+                        updatePosition();
+                        for (int i = 0; i < projectiles.size(); i++) {
+                            Projectile projectile = projectiles.get(i);
+                            projectile.updatePosition();
+                            if (projectile.outOfBounds()) {
+                                Game.getGameWorld().getChildren().remove(projectile.getProjectileView());
+                                projectiles.remove(i);
+                                i--;
+                            }
                         }
-                    }
-
-                });
+                    });
+                }
                 try {
                     Thread.sleep(10); // 60 FPS
                 } catch (InterruptedException e) {
@@ -106,6 +108,11 @@ public class Player {
         playerThread.setDaemon(true);
         playerThread.start();
 
+    }
+
+    private void updatePosition() {
+        shipView.setTranslateX(x);
+        shipView.setTranslateY(y);
     }
 
     public void takeDamage(double damage) {
@@ -141,7 +148,7 @@ public class Player {
     }
 
     private void die() {
-        // GameController.GameOver();
+        gameController.gameOver();
     }
 
 }

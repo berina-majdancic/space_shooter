@@ -56,7 +56,7 @@ public class Game {
          */
     }
 
-    public void showPauseMenu() {
+    public static void showPauseMenu() {
         try {
             App.showPauseMenu();
 
@@ -98,12 +98,9 @@ public class Game {
     }
 
     public static void pauseGame() {
-        try {
-            App.showPauseMenu();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
         gameLoop.stop();
         GameController.setGamePaused(true);
+        GameController.showGameOverScreen();
     }
 }

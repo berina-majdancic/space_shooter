@@ -13,17 +13,20 @@ import io.github.berinamajdancic.entities.Player;
 import io.github.berinamajdancic.entities.Projectile;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 public class GameController {
-    private static final Set<KeyCode> activeKeys = new HashSet<>();
+    private final Set<KeyCode> activeKeys = new HashSet<>();
     private static Player player;
     private ArrayList<Enemy> enemies;
     private static final double movementSpeed = 300;
-    private final Stage stage;
+    private static Stage stage;
     private static double deltaTime = 0;
     private double lastUpdateTime = 0;
     private DatabaseManager databaseManager;
@@ -33,7 +36,7 @@ public class GameController {
 
     public GameController(Stage stage) throws IOException {
         databaseManager = new DatabaseManager();
-        player = new Player();
+        player = new Player(this);
         enemies = new ArrayList<>();
         enemies.add(new Enemy());
         enemies.add(new Enemy());
@@ -41,7 +44,7 @@ public class GameController {
         this.stage = stage;
         setupGame();
         startEnemyBehavior();
-        startCOllisionThread();
+        startCollisionThread();
     }
 
     public static boolean isGamePaused() {
@@ -84,7 +87,7 @@ public class GameController {
                 i--;
                 enemies.add(new Enemy());
             } else if (enemy.isOutOfBounds()) {
-                player.takeDamage(100);
+                player.takeDamage(300);
                 enemy.removeEnemy();
                 Game.getGameWorld().getChildren().remove(enemy.getShipView());
                 enemies.remove(i);
@@ -106,10 +109,11 @@ public class GameController {
         if (activeKeys.contains(KeyCode.ESCAPE)) {
             isGamePaused = true;
             Game.pauseGame();
+            Game.showPauseMenu();
         }
     }
 
-    public static void handleContinuousMovement() {
+    public void handleContinuousMovement() {
         double dx = 0, dy = 0;
         if (activeKeys.contains(KeyCode.A) || activeKeys.contains(KeyCode.LEFT))
             dx -= movementSpeed * deltaTime;
@@ -165,28 +169,6 @@ public class GameController {
 
     }
 
-    private void setupHUD() {
-        scoreLabel = new Label("Score: 0");
-        scoreLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: white;");
-        scoreLabel.setTranslateX(10);
-        scoreLabel.setTranslateY(10);
-        scoreLabel.setText("Score: " + player.getScore());
-
-        Game.getHud().getChildren().add(scoreLabel);
-
-        Scene scene = App.getGameRoot().getScene();
-
-        healthBar = new ProgressBar();
-        healthBar.setPrefWidth(200);
-        healthBar.setStyle("-fx-accent: purple; -fx-border-style: none;");
-        if (scene != null)
-            healthBar.setTranslateX(scene.getWidth() - 220);
-        healthBar.setTranslateY(20);
-        healthBar.setProgress(player.getHealth() / player.getMaxHealth());
-        Game.getHud().getChildren().add(healthBar);
-
-    }
-
     public static void updateHealth(double health, double maxHealth) {
         healthBar.setProgress(health / maxHealth);
     }
@@ -195,7 +177,7 @@ public class GameController {
         scoreLabel.setText("Score: " + score);
     }
 
-    public void startCOllisionThread() {
+    private void startCollisionThread() {
         Thread thread = new Thread(() -> {
             while (!enemies.isEmpty() && !Thread.currentThread().isInterrupted()) {
                 if (!isGamePaused)
@@ -212,7 +194,6 @@ public class GameController {
     }
 
     private void startEnemyBehavior() {
-
         Thread thread = new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) {
                 if (!isGamePaused) {
@@ -239,12 +220,59 @@ public class GameController {
         thread.start();
     }
 
-    public static void gameOver() {
-        Label gameOverLabel = new Label("Game Over");
-        gameOverLabel.setStyle("-fx-font-size: 50px; -fx-text-fill: white;");
-        gameOverLabel.setTranslateX(300);
-        gameOverLabel.setTranslateY(200);
-        Game.getGameWorld().getChildren().add(gameOverLabel);
+    public void gameOver() {
+        Game.pauseGame();
+        databaseManager.saveScore(player.getScore());
     }
 
+    public static void showGameOverScreen() {
+        Rectangle overlay = new Rectangle();
+        overlay.setWidth(stage.getScene().getWidth());
+        overlay.setHeight(stage.getScene().getHeight());
+        overlay.setFill(Color.rgb(0, 0, 0, 0.5));
+        Game.getGameWorld().getChildren().add(overlay);
+
+        Label gameOverLabel = new Label("Game Over");
+        gameOverLabel.getStyleClass().add("game-over-label");
+        gameOverLabel.setTranslateX(stage.getScene().getWidth() / 2 - 100);
+        gameOverLabel.setTranslateY(stage.getScene().getHeight() / 2 - 50);
+        Game.getHud().getChildren().add(gameOverLabel);
+
+        Button restartButton = new Button("Restart");
+        restartButton.getStyleClass().add("button");
+        restartButton.setTranslateX(stage.getScene().getWidth() / 2 - 50);
+        restartButton.setTranslateY(stage.getScene().getHeight() / 2 + 10);
+
+        restartButton.setOnAction(e -> {
+            System.err.println("Restarting game...");
+            try {
+                App.restartGame();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
+        Game.getHud().getChildren().add(restartButton);
+    }
+
+    private void setupHUD() {
+
+        scoreLabel = new Label("Score: 0");
+        scoreLabel.setStyle("-fx-font-style: -fx-font-size: 20px; -fx-text-fill: white;");
+        scoreLabel.setTranslateX(10);
+        scoreLabel.setTranslateY(10);
+        scoreLabel.setText("Score: " + player.getScore());
+        Game.getHud().getChildren().add(scoreLabel);
+
+        Scene scene = App.getGameRoot().getScene();
+
+        healthBar = new ProgressBar();
+        healthBar.setPrefWidth(200);
+        healthBar.setStyle("-fx-accent: purple; -fx-border-style: none;");
+        if (scene != null)
+            healthBar.setTranslateX(scene.getWidth() - 220);
+        healthBar.setTranslateY(20);
+        healthBar.setProgress(player.getHealth() / player.getMaxHealth());
+        Game.getHud().getChildren().add(healthBar);
+
+    }
 }
