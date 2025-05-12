@@ -33,7 +33,6 @@ public class Player {
     }
 
     public ImageView getShipView() {
-        System.out.println("SHipView Exists");
         return shipView;
     }
 
@@ -42,8 +41,7 @@ public class Player {
     }
 
     private void setupImageView() {
-        InputStream inputStream =
-                getClass().getResourceAsStream("/io/github/berinamajdancic/images/ship.png");
+        InputStream inputStream = getClass().getResourceAsStream("/io/github/berinamajdancic/images/ship.png");
         shipImage = new Image(inputStream);
         shipView = new ImageView(shipImage);
         shipView.setFitWidth(width);

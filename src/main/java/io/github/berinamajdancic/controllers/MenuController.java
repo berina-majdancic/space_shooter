@@ -4,24 +4,22 @@ import java.io.IOException;
 
 import io.github.berinamajdancic.App;
 import io.github.berinamajdancic.db.DatabaseManager;
+import io.github.berinamajdancic.db.LeaderboardEntry;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.cell.PropertyValueFactory;
-
-import io.github.berinamajdancic.db.LeaderboardEntry;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 
 public class MenuController {
     private static DatabaseManager databaseManager;
     private static App app;
 
     @FXML
-    private TableView<LeaderboardEntry> leaderboardTable;
+    private TableView<LeaderboardEntry> leaderboardTable = new TableView<>();
     @FXML
     private TableColumn<LeaderboardEntry, Integer> rankColumn;
     @FXML
@@ -126,10 +124,11 @@ public class MenuController {
     @FXML
     public void initialize() {
 
-        // rankColumn.setCellValueFactory(new PropertyValueFactory<>("rank"));
+        //rankColumn.setCellValueFactory(new PropertyValueFactory<>("rank"));
         // usernameColumn.setCellValueFactory(new PropertyValueFactory<>("username"));
         // scoreColumn.setCellValueFactory(new PropertyValueFactory<>("score"));
-        // leaderboardTable.setItems(databaseManager.getLeaderboardData());
+        if (databaseManager != null)
+            leaderboardTable.setItems(databaseManager.getLeaderboardData());
 
     }
 }
