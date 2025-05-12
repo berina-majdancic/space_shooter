@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import io.github.berinamajdancic.DatabaseManager;
 import io.github.berinamajdancic.Game;
+import io.github.berinamajdancic.db.DatabaseManager;
 import io.github.berinamajdancic.entities.Enemy;
 import io.github.berinamajdancic.entities.Player;
 import io.github.berinamajdancic.entities.Projectile;
@@ -28,7 +28,6 @@ public class GameController {
     private final Set<KeyCode> activeKeys = new HashSet<>();
 
     public GameController(Stage stage, Game game, DatabaseManager databaseManager) throws IOException {
-        databaseManager = new DatabaseManager();
         player = new Player(this);
         enemies = new ArrayList<>();
         enemies.add(new Enemy());

@@ -3,6 +3,7 @@ package io.github.berinamajdancic;
 import java.io.IOException;
 
 import io.github.berinamajdancic.controllers.GameController;
+import io.github.berinamajdancic.db.DatabaseManager;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.Parent;
@@ -35,8 +36,7 @@ public class Game {
     private static Pane hud;
     private Label scoreLabel;
     private ProgressBar healthBar;
-    private static final String BACKGROUND_PATH =
-            "/io/github/berinamajdancic/images/stars_background.jpg";
+    private static final String BACKGROUND_PATH = "/io/github/berinamajdancic/images/stars_background.jpg";
 
     public Game(Stage stage, App app, DatabaseManager databaseManager) throws IOException {
         this.stage = stage;

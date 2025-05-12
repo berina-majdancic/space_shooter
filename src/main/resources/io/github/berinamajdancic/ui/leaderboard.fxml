@@ -8,18 +8,20 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.geometry.Insets?>
 
+
 <BorderPane styleClass="root" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@menu.css" fx:controller="io.github.berinamajdancic.controllers.MenuController">
    <center>
-      <VBox alignment="CENTER" spacing="20.0">
+      <VBox alignment="CENTER" spacing="20.0" styleClass="table-container">
          <children>
             <Label styleClass="game-header" text="SPACE_SHOOTER" />
             <TableView fx:id="leaderboardTable" prefWidth="400" prefHeight="300">
                <columns>
-                   <TableColumn fx:id="rankColumn" text="Rank" prefWidth="100" />
-                   <TableColumn fx:id="usernameColumn" text="Username" prefWidth="150" />
-                   <TableColumn fx:id="scoreColumn" text="Score" prefWidth="150" />
+                   <TableColumn styleClass="table-column" fx:id="rankColumn" text="Rank" prefWidth="100" />
+                   <TableColumn styleClass="table-column" fx:id="usernameColumn" text="Username" prefWidth="150" />
+                   <TableColumn styleClass="table-column" fx:id="scoreColumn" text="Score" prefWidth="150" />
                </columns>
             </TableView>
+            <Button styleClass="menu-button" text="Back" onAction="#showMainMenu" />
          </children>
       </VBox>
    </center>

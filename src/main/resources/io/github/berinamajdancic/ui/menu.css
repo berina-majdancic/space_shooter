@@ -8,6 +8,13 @@
     -fx-font-weight: bold;
     -fx-text-fill: #ffffff;
 }
+.game-over-label
+{
+    -fx-font-family: "Silkscreen", sans-serif;
+    -fx-font-size: 50px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+}
 
 .root {
 
@@ -20,17 +27,15 @@
 }
 
 .button {
+    -fx-font-family: "Silkscreen", sans-serif;
     -fx-background-color: transparent;
     -fx-border-color: transparent;
     -fx-text-fill: #ffffff;
     -fx-font-size: 24px;
     -fx-font-weight: bold;
     -fx-padding: 10px 14px;
-    /* Added right/left padding to account for growth */
     -fx-min-width: 100px;
-    /* Set minimum width based on your needs */
     -fx-min-height: 60px;
-    /* Set minimum height based on your needs */
     -fx-alignment: center;
     -fx-cursor: hand;
 }
@@ -38,7 +43,6 @@
 .button:hover {
     -fx-font-size: 27px;
     -fx-translate-x: -2px;
-    /* Small adjustment to keep centered */
     -fx-translate-y: -2px;
 }
 
@@ -87,4 +91,34 @@ TextField:focused,
 PasswordField:focused {
     -fx-border-color: rgb(100, 153, 255);
     -fx-effect: none;
+}
+
+#leaderboardTable {
+    -fx-background-color: rgba(0, 0, 0, 0);
+    -fx-border-style: none;
+    -fx-background-radius: 10px;
+    -fx-padding: 10px;
+    -fx-max-width: 700px;
+
+}
+
+.table-view .column-header  {
+    -fx-background-color: transparent; 
+    -fx-border-color: transparent; 
+    -fx-padding: 10px; 
+    -fx-background-radius: 10px;
+        -fx-alignment: center;
+
+    
+}
+
+.table-view .column-header-background {
+    -fx-background-color: rgba(0, 0, 0, 0);
+    -fx-border-color: rgba(255, 255, 255, 0.5); 
+    -fx-border-width: 0 0 2px 0; 
+}
+.table-view .column-header .label {
+    -fx-text-fill: white; /* White text for header labels */
+    -fx-font-size: 20px;
+    -fx-alignment: center; /* Center-align text */
 }
