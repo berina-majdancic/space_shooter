@@ -17,14 +17,15 @@ import javafx.stage.Stage;
 
 public class GameController {
     private final Game game;
-    private final Player player;
+    private Player player;
     private final Stage stage;
     private final DatabaseManager databaseManager;
     private final double movementSpeed = 300;
     private static double deltaTime = 0;
     private double lastUpdateTime = 0;
     private boolean isGamePaused = false;
-    private final ArrayList<Enemy> enemies;
+    private boolean gameIsRunning = true;
+    private ArrayList<Enemy> enemies;
     private final Set<KeyCode> activeKeys = new HashSet<>();
 
     public GameController(Stage stage, Game game, DatabaseManager databaseManager) throws IOException {
@@ -47,6 +48,10 @@ public class GameController {
 
     public boolean isGamePaused() {
         return isGamePaused;
+    }
+
+    public void setIsGameRunning(boolean isGameRunning) {
+        gameIsRunning = isGameRunning;
     }
 
     public void setGamePaused(boolean isGamePaused) {
@@ -167,6 +172,8 @@ public class GameController {
 
     public void updateHealth(double health, double maxHealth) {
         game.updateHealthBar(health, maxHealth);
+        if (player.isDead())
+            game.showGameOverScreen();
     }
 
     public void updateScore(int score) {
@@ -191,9 +198,8 @@ public class GameController {
 
     private void startEnemyBehavior() {
         Thread thread = new Thread(() -> {
-            while (!Thread.currentThread().isInterrupted()) {
+            while (gameIsRunning && !Thread.currentThread().isInterrupted()) {
                 if (!isGamePaused) {
-
                     for (int i = 0; i < enemies.size(); i++) {
                         Enemy enemy = enemies.get(i);
                         enemy.update();

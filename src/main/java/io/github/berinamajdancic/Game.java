@@ -26,7 +26,7 @@ import javafx.util.Duration;
 
 public class Game {
     // private AnimationTimer gameLoop;
-    private final GameController gameController;
+    private GameController gameController;
     private Timeline gameLoop;
     private static final double FRAME_RATE = 60.0;
     private final App app;
@@ -36,6 +36,7 @@ public class Game {
     private static Pane hud;
     private Label scoreLabel;
     private ProgressBar healthBar;
+    private boolean isGameOver = true;
     private static final String BACKGROUND_PATH = "/io/github/berinamajdancic/images/stars_background.jpg";
 
     public Game(Stage stage, App app, DatabaseManager databaseManager) throws IOException {
@@ -110,17 +111,16 @@ public class Game {
     }
 
     public void deleteGame() {
-        gameLoop.stop();
+        gameController.setIsGameRunning(false);
         gameWorld.getChildren().clear();
         hud.getChildren().clear();
         root.getChildren().clear();
+        gameLoop.stop();
     }
 
     public void pauseGame() {
-
         gameLoop.stop();
         gameController.setGamePaused(true);
-        showGameOverScreen();
     }
 
     private void setupHUD() {
@@ -142,7 +142,11 @@ public class Game {
 
     }
 
-    private void showGameOverScreen() {
+    public void showGameOverScreen() {
+        if (isGameOver)
+            return;
+        System.err.println("gameover");
+        isGameOver = true;
         Rectangle overlay = new Rectangle();
         overlay.setWidth(stage.getScene().getWidth());
         overlay.setHeight(stage.getScene().getHeight());
@@ -162,6 +166,7 @@ public class Game {
 
         restartButton.setOnAction(e -> {
             System.err.println("Restarting game...");
+            deleteGame();
             restartGame();
         });
         hud.getChildren().add(restartButton);

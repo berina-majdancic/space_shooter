@@ -83,7 +83,7 @@ public class Player {
 
     private void startPlayerThread() {
         Thread playerThread = new Thread(() -> {
-            while (!Thread.currentThread().isInterrupted()) {
+            while (!isDead && !Thread.currentThread().isInterrupted()) {
                 if (!gameController.isGamePaused()) {
                     gameController.handleContinuousMovement();
                     calculateProjectilePosition();
