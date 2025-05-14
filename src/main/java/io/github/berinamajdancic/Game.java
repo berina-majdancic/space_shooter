@@ -26,7 +26,7 @@ import javafx.util.Duration;
 
 public class Game {
     // private AnimationTimer gameLoop;
-    private GameController gameController;
+    private final GameController gameController;
     private Timeline gameLoop;
     private static final double FRAME_RATE = 60.0;
     private final App app;
@@ -36,7 +36,7 @@ public class Game {
     private static Pane hud;
     private Label scoreLabel;
     private ProgressBar healthBar;
-    private boolean isGameOver = true;
+    private boolean isGameOver = false;
     private static final String BACKGROUND_PATH = "/io/github/berinamajdancic/images/stars_background.jpg";
 
     public Game(Stage stage, App app, DatabaseManager databaseManager) throws IOException {

@@ -17,7 +17,7 @@ import javafx.stage.Stage;
 
 public class GameController {
     private final Game game;
-    private Player player;
+    private final Player player;
     private final Stage stage;
     private final DatabaseManager databaseManager;
     private final double movementSpeed = 300;
