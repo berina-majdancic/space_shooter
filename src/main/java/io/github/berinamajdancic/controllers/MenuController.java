@@ -13,6 +13,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 public class MenuController {
     private static DatabaseManager databaseManager;
@@ -123,10 +124,12 @@ public class MenuController {
 
     @FXML
     public void initialize() {
+        if (rankColumn != null) {
+            rankColumn.setCellValueFactory(new PropertyValueFactory<>("rank"));
+            usernameColumn.setCellValueFactory(new PropertyValueFactory<>("username"));
+            scoreColumn.setCellValueFactory(new PropertyValueFactory<>("score"));
 
-        //rankColumn.setCellValueFactory(new PropertyValueFactory<>("rank"));
-        // usernameColumn.setCellValueFactory(new PropertyValueFactory<>("username"));
-        // scoreColumn.setCellValueFactory(new PropertyValueFactory<>("score"));
+        }
         if (databaseManager != null)
             leaderboardTable.setItems(databaseManager.getLeaderboardData());
 
