@@ -28,7 +28,8 @@ public class GameController {
     private ArrayList<Enemy> enemies;
     private final Set<KeyCode> activeKeys = new HashSet<>();
 
-    public GameController(Stage stage, Game game, DatabaseManager databaseManager) throws IOException {
+    public GameController(Stage stage, Game game, DatabaseManager databaseManager)
+            throws IOException {
         player = new Player(this);
         enemies = new ArrayList<>();
         enemies.add(new Enemy());
@@ -89,6 +90,7 @@ public class GameController {
                 enemies.add(new Enemy());
             } else if (enemy.isOutOfBounds()) {
                 player.takeDamage(300);
+                updateHealth(player.getHealth(), player.getMaxHealth());
                 enemy.removeEnemy();
                 Game.getGameWorld().getChildren().remove(enemy.getShipView());
                 enemies.remove(i);
@@ -159,6 +161,9 @@ public class GameController {
                 if (projectile.getProjectileView().getBoundsInParent()
                         .intersects(player.getShipView().getBoundsInParent())) {
                     player.takeDamage(projectile.getDamage());
+                    Platform.runLater(() -> {
+                        updateHealth(player.getHealth(), player.getMaxHealth());
+                    });
                     projectile.setOutOfBounds(true);
                     if (enemy.isDead() || enemy.isOutOfBounds()) {
                         enemies.remove(i);
@@ -173,6 +178,7 @@ public class GameController {
     public void updateHealth(double health, double maxHealth) {
         game.updateHealthBar(health, maxHealth);
         if (player.isDead()) {
+            System.err.println("dead");
             databaseManager.saveScore(player.getScore());
             game.showGameOverScreen();
         }
@@ -187,6 +193,7 @@ public class GameController {
             while (!enemies.isEmpty() && !Thread.currentThread().isInterrupted()) {
                 if (!isGamePaused)
                     handleCollisions();
+
                 try {
                     Thread.sleep(10);
                 } catch (InterruptedException e) {
