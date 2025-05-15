@@ -4,7 +4,7 @@ USE space_shooter;
 
 CREATE TABLE IF NOT EXISTS player(
     Username VARCHAR(15) PRIMARY KEY,
-    Password VARCHAR(64) NOT NULL,
+    Password VARCHAR(64) NOT NULL
 );
 
 
