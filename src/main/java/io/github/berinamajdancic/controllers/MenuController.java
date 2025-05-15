@@ -9,6 +9,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -18,6 +19,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 public class MenuController {
     private static DatabaseManager databaseManager;
     private static App app;
+
+    @FXML
+    private Label profileLabel;
 
     @FXML
     private TableView<LeaderboardEntry> leaderboardTable = new TableView<>();
@@ -130,8 +134,20 @@ public class MenuController {
             scoreColumn.setCellValueFactory(new PropertyValueFactory<>("score"));
 
         }
-        if (databaseManager != null)
+        if (databaseManager != null) {
             leaderboardTable.setItems(databaseManager.getLeaderboardData());
+            if (profileLabel != null)
+                updateProfileLabel();
 
+        }
+
+    }
+
+    public void updateProfileLabel() {
+        if (databaseManager.isLoggedIn()) {
+            profileLabel.setText("Profile: " + databaseManager.getUsername());
+        } else {
+            profileLabel.setText("Not logged in");
+        }
     }
 }

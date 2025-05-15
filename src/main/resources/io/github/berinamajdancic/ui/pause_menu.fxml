@@ -7,6 +7,9 @@
 <?import javafx.geometry.Insets?>
 
 <BorderPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@menu.css" fx:controller="io.github.berinamajdancic.controllers.MenuController">
+   <top>
+      <Label fx:id="profileLabel" styleClass="profile-label" text="Not logged in" BorderPane.alignment="TOP_RIGHT" />
+   </top>
    <center>
       <VBox alignment="CENTER" spacing="20.0">
          <children>

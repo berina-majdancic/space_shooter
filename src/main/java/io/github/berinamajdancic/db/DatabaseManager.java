@@ -19,8 +19,16 @@ public class DatabaseManager {
     private final String USER = "javafx_user";
     private final String PASSWORD = "your_password";
 
-    private String username = "player";
+    private String username = "player" + Math.random() * 15000;
     private boolean isLoggedIn = false;
+
+    public boolean isLoggedIn() {
+        return isLoggedIn;
+    }
+
+    public String getUsername() {
+        return username;
+    }
 
     public Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USER, PASSWORD);
@@ -34,6 +42,7 @@ public class DatabaseManager {
 
             stmt.setString(1, username);
             stmt.setInt(2, score);
+            stmt.setInt(3, score);
             stmt.executeUpdate();
 
         } catch (SQLException e) {
@@ -42,19 +51,19 @@ public class DatabaseManager {
     }
 
     public void Register(String username, String password) {
-        String query = "INSERT INTO player (Username, Password, Salt) VALUES (?, ?, ?)";
+        String query = "INSERT INTO player (Username, Password) VALUES (?, ?)";
         try (Connection conn = getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, username);
-            stmt.setInt(2, 300);
-            ResultSet rs = stmt.executeQuery();
+            stmt.setString(2, password);
+            stmt.execute();
 
-            if (rs.next()) {
-                System.out.println("Login successful!");
+            /*if (rs.next()) {
+                System.out.println("Registered successfully!");
             } else {
                 System.out.println("Invalid username or password.");
-            }
+            }*/
 
         } catch (SQLException e) {
             System.err.println("Database error: " + e.getMessage());
