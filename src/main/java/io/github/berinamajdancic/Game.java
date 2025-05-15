@@ -37,7 +37,8 @@ public class Game {
     private Label scoreLabel;
     private ProgressBar healthBar;
     private boolean isGameOver = false;
-    private static final String BACKGROUND_PATH = "/io/github/berinamajdancic/images/stars_background.jpg";
+    private static final String BACKGROUND_PATH =
+            "/io/github/berinamajdancic/images/stars_background.jpg";
 
     public Game(Stage stage, App app, DatabaseManager databaseManager) throws IOException {
         this.stage = stage;
@@ -126,7 +127,8 @@ public class Game {
     private void setupHUD() {
 
         scoreLabel = new Label("Score: 0");
-        scoreLabel.setStyle("-fx-font-style: -fx-font-size: 20px; -fx-text-fill: white;");
+        scoreLabel.setStyle(
+                "-fx-font-family: \"Silkscreen\", sans-serif; -fx-font-size: 20px; -fx-text-fill: white;");
         scoreLabel.setTranslateX(10);
         scoreLabel.setTranslateY(10);
         scoreLabel.setText("Score: " + 0);
