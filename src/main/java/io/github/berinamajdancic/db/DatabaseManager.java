@@ -10,11 +10,9 @@ import java.util.List;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 
 public class DatabaseManager {
-    /*private final String URL = "jdbc:mysql://sql.freedb.tech:3306/freedb_space_shooter";
-    private final String USER = "freedb_player";
-    private final String PASSWORD = "%gKc8!&MUnC5eWF";*/
     private final String URL = "jdbc:mysql://localhost:3306/space_shooter";
     private final String USER = "javafx_user";
     private final String PASSWORD = "your_password";
@@ -35,56 +33,77 @@ public class DatabaseManager {
     }
 
     public void saveScore(int score) {
-        String query = "INSERT INTO highscore (Username, Highscore) VALUES (?, ?) ON DUPLICATE KEY UPDATE Highscore = GREATEST(Highscore, ?)";
-
-        try (Connection conn = getConnection();
-                PreparedStatement stmt = conn.prepareStatement(query)) {
-
-            stmt.setString(1, username);
-            stmt.setInt(2, score);
-            stmt.setInt(3, score);
-            stmt.executeUpdate();
-
-        } catch (SQLException e) {
-            System.err.println("Database error: " + e.getMessage());
-        }
+        Task<Void> saveTask = new Task<>() {
+            @Override
+            protected Void call() {
+                String query =
+                        "INSERT INTO highscore (Username, Highscore) VALUES (?, ?) ON DUPLICATE KEY UPDATE Highscore = GREATEST(Highscore, ?)";
+                try (Connection conn = getConnection();
+                        PreparedStatement stmt = conn.prepareStatement(query)) {
+                    stmt.setString(1, username);
+                    stmt.setInt(2, score);
+                    stmt.setInt(3, score);
+                    stmt.executeUpdate();
+                } catch (SQLException e) {
+                    System.err.println("Database error: " + e.getMessage());
+                }
+                return null;
+            }
+        };
+        new Thread(saveTask).start();
     }
+
 
     public void Register(String username, String password) {
-        String query = "INSERT INTO player (Username, Password) VALUES (?, ?)";
-        try (Connection conn = getConnection();
-                PreparedStatement stmt = conn.prepareStatement(query)) {
+        Task<Void> saveTask = new Task<>() {
+            @Override
+            protected Void call() {
+                String query = "INSERT INTO player (Username, Password) VALUES (?, ?)";
+                try (Connection conn = getConnection();
+                        PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setString(1, username);
-            stmt.setString(2, password);
-            stmt.execute();
+                    stmt.setString(1, username);
+                    stmt.setString(2, password);
+                    stmt.execute();
 
-        } catch (SQLException e) {
-            System.err.println("Database error: " + e.getMessage());
-        }
+                } catch (SQLException e) {
+                    System.err.println("Database error: " + e.getMessage());
+                }
+                return null;
+            }
+        };
+        new Thread(saveTask).start();
     }
+
 
     public void login(String username, String password) {
-        String query = "SELECT * FROM player WHERE Username = ? AND Password = ?";
-        try (Connection conn = getConnection();
-                PreparedStatement stmt = conn.prepareStatement(query)) {
+        Task<Void> loginTask = new Task<Void>() {
+            @Override
+            protected Void call() {
+                String query = "SELECT * FROM player WHERE Username = ? AND Password = ?";
+                try (Connection conn = getConnection();
+                        PreparedStatement stmt = conn.prepareStatement(query)) {
+                    stmt.setString(1, username);
+                    stmt.setString(2, password);
+                    ResultSet rs = stmt.executeQuery();
 
-            stmt.setString(1, username);
-            stmt.setString(2, password);
-            ResultSet rs = stmt.executeQuery();
+                    if (rs.next()) {
+                        System.out.println("Login successful!");
+                        DatabaseManager.this.username = username;
+                        DatabaseManager.this.isLoggedIn = true;
+                    } else {
+                        System.out.println("Invalid username or password.");
+                    }
 
-            if (rs.next()) {
-                System.out.println("Login successful!");
-                this.username = username;
-                this.isLoggedIn = true;
-            } else {
-                System.out.println("Invalid username or password.");
+                } catch (SQLException e) {
+                    System.err.println("Database error: " + e.getMessage());
+                }
+                return null;
             }
+        };
 
-        } catch (SQLException e) {
-            System.err.println("Database error: " + e.getMessage());
-        }
     }
+
 
     public ObservableList<LeaderboardEntry> getLeaderboardData() {
         List<LeaderboardEntry> leaderboard = new ArrayList<>();
