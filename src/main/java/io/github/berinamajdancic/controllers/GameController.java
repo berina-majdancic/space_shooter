@@ -172,8 +172,10 @@ public class GameController {
 
     public void updateHealth(double health, double maxHealth) {
         game.updateHealthBar(health, maxHealth);
-        if (player.isDead())
+        if (player.isDead()) {
+            databaseManager.saveScore(player.getScore());
             game.showGameOverScreen();
+        }
     }
 
     public void updateScore(int score) {

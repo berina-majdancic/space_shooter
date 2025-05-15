@@ -35,7 +35,7 @@ public class DatabaseManager {
     }
 
     public void saveScore(int score) {
-        String query = "INSERT INTO highscore (Username, highscore) VALUES (?, ?) ON DUPLICATE KEY UPDATE highscore = GREATEST(highscore, ?)";
+        String query = "INSERT INTO highscore (Username, Highscore) VALUES (?, ?) ON DUPLICATE KEY UPDATE Highscore = GREATEST(Highscore, ?)";
 
         try (Connection conn = getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -59,19 +59,13 @@ public class DatabaseManager {
             stmt.setString(2, password);
             stmt.execute();
 
-            /*if (rs.next()) {
-                System.out.println("Registered successfully!");
-            } else {
-                System.out.println("Invalid username or password.");
-            }*/
-
         } catch (SQLException e) {
             System.err.println("Database error: " + e.getMessage());
         }
     }
 
     public void login(String username, String password) {
-        String query = "SELECT * FROM player WHERE username = ? AND password = ?";
+        String query = "SELECT * FROM player WHERE Username = ? AND Password = ?";
         try (Connection conn = getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
@@ -94,13 +88,13 @@ public class DatabaseManager {
 
     public ObservableList<LeaderboardEntry> getLeaderboardData() {
         List<LeaderboardEntry> leaderboard = new ArrayList<>();
-        String query = "SELECT Username, highscore FROM highscore ORDER BY highscore DESC";
+        String query = "SELECT Username, Highscore FROM highscore ORDER BY Highscore DESC";
         try (PreparedStatement statement = getConnection().prepareStatement(query);
                 ResultSet resultSet = statement.executeQuery()) {
             int rank = 1;
             while (resultSet.next()) {
-                String username1 = resultSet.getString("username");
-                int score = resultSet.getInt("highscore");
+                String username1 = resultSet.getString("Username");
+                int score = resultSet.getInt("Highscore");
 
                 leaderboard.add(new LeaderboardEntry(username1, score, rank));
                 rank++;

@@ -3,17 +3,14 @@ CREATE DATABASE space_shooter;
 USE space_shooter;
 
 CREATE TABLE IF NOT EXISTS player(
-    ID INT PRIMARY KEY AUTO_INCREMENT,
-    Username VARCHAR(13) NOT NULL,
+    Username VARCHAR(15) PRIMARY KEY,
     Password VARCHAR(64) NOT NULL,
-    Salt VARCHAR(32) NOT NULL
 );
 
 
 CREATE TABLE IF NOT EXISTS highscore(
     ID INT PRIMARY KEY AUTO_INCREMENT,
-    Player_ID INT,
-    highscore INT NOT NULL,
-    Username VARCHAR(13),
-    FOREIGN KEY (Player_ID) REFERENCES player(ID)
+    Highscore INT NOT NULL,
+    Username VARCHAR(15) NOT NULL,
+    CONSTRAINT unique_username UNIQUE (Username)
 );
