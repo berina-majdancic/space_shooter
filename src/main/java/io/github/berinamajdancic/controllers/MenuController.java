@@ -132,15 +132,13 @@ public class MenuController {
             rankColumn.setCellValueFactory(new PropertyValueFactory<>("rank"));
             usernameColumn.setCellValueFactory(new PropertyValueFactory<>("username"));
             scoreColumn.setCellValueFactory(new PropertyValueFactory<>("score"));
-
         }
         if (databaseManager != null) {
-            leaderboardTable.setItems(databaseManager.getLeaderboardData());
+            if (rankColumn != null)
+                leaderboardTable.setItems(databaseManager.getLeaderboardData());
             if (profileLabel != null)
                 updateProfileLabel();
-
         }
-
     }
 
     public void updateProfileLabel() {
