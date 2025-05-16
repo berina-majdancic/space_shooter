@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import io.github.berinamajdancic.Game;
+import io.github.berinamajdancic.SoundManager;
 import io.github.berinamajdancic.controllers.GameController;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
@@ -13,19 +14,24 @@ public class Player {
     private Image shipImage;
     private ImageView shipView;
     private double fireRate = 200_000_000;
-    private double x = 160, y = 128;
+    private double x, y;
     private long lastShotTime = 0;
     private int score = 0;
+    private int powerUpTreshold = 1000;
     private int health;
     private final double width = 150, height = 150;
     private final double speed = 2.0;
     private final int maxHealth = 1000;
     private final GameController gameController;
     private boolean isDead = false;
-    ArrayList<Projectile> projectiles;
+    private ArrayList<Projectile> projectiles;
+    private SoundManager soundManager;
 
-    public Player(GameController gameController) {
+    public Player(GameController gameController, double x, double y, SoundManager soundManager) {
         this.gameController = gameController;
+        this.x = x;
+        this.y = y;
+        this.soundManager = soundManager;
         projectiles = new ArrayList<>();
         setupImageView();
         startPlayerThread();
@@ -133,9 +139,14 @@ public class Player {
 
     public void addScore(int score) {
         this.score += score;
-        if (score % 500 == 0) {
-            health += 100;
-            fireRate -= 100_000;
+        soundManager.playKillSound();
+        if (this.score % 500 == 0) {
+            health = Math.min(maxHealth, health + 50);
+        }
+        if (this.score % powerUpTreshold == 0) {
+            fireRate = Math.max(50_000_000, fireRate - 20_000_000);
+            powerUpTreshold = Math.min(powerUpTreshold * 2, 6000);
+            soundManager.playAchievementSound();
         }
         gameController.updateScore(this.score);
     }
