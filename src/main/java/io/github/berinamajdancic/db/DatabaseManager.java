@@ -17,7 +17,7 @@ public class DatabaseManager {
     private final String USER = "javafx_user";
     private final String PASSWORD = "your_password";
 
-    private String username = "player" + Math.random() * 15000;
+    private String username = "player" + (int) (Math.random() * 1500);
     private boolean isLoggedIn = false;
 
     public boolean isLoggedIn() {
@@ -36,8 +36,7 @@ public class DatabaseManager {
         Task<Void> saveTask = new Task<>() {
             @Override
             protected Void call() {
-                String query =
-                        "INSERT INTO highscore (Username, Highscore) VALUES (?, ?) ON DUPLICATE KEY UPDATE Highscore = GREATEST(Highscore, ?)";
+                String query = "INSERT INTO highscore (Username, Highscore) VALUES (?, ?) ON DUPLICATE KEY UPDATE Highscore = GREATEST(Highscore, ?)";
                 try (Connection conn = getConnection();
                         PreparedStatement stmt = conn.prepareStatement(query)) {
                     stmt.setString(1, username);
@@ -53,9 +52,8 @@ public class DatabaseManager {
         new Thread(saveTask).start();
     }
 
-
     public void Register(String username, String password) {
-        Task<Void> saveTask = new Task<>() {
+        Task<Void> registerTask = new Task<>() {
             @Override
             protected Void call() {
                 String query = "INSERT INTO player (Username, Password) VALUES (?, ?)";
@@ -72,9 +70,8 @@ public class DatabaseManager {
                 return null;
             }
         };
-        new Thread(saveTask).start();
+        new Thread(registerTask).start();
     }
-
 
     public void login(String username, String password) {
         Task<Void> loginTask = new Task<Void>() {
@@ -101,9 +98,9 @@ public class DatabaseManager {
                 return null;
             }
         };
+        new Thread(loginTask).start();
 
     }
-
 
     public ObservableList<LeaderboardEntry> getLeaderboardData() {
         List<LeaderboardEntry> leaderboard = new ArrayList<>();
