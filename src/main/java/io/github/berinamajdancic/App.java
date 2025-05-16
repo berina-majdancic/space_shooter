@@ -22,11 +22,13 @@ public class App extends Application {
     private Pane gameRoot;
     private Game game;
     private DatabaseManager databaseManager;
+    private SoundManager soundManager;
 
     @Override
     public void start(Stage stage) throws IOException {
         primaryStage = stage;
         databaseManager = new DatabaseManager();
+        soundManager = new SoundManager();
         setupStage();
         gameRoot = new Pane();
         scene = new Scene(gameRoot);
@@ -67,8 +69,9 @@ public class App extends Application {
     }
 
     public void startGame() throws IOException {
-        game = new Game(primaryStage, this, databaseManager);
+        game = new Game(primaryStage, this, databaseManager, soundManager);
         game.start();
+        soundManager.playLevelUpSound();
     }
 
     public void showPauseMenu() throws IOException {

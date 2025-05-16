@@ -13,6 +13,7 @@ public class SoundManager {
 
     public SoundManager() {
         loadAllSounds();
+        playBackgroundMusic();
     }
 
     private void loadSound(String id, String filePath) {
@@ -36,11 +37,25 @@ public class SoundManager {
 
     private void loadAllSounds() {
         loadSound("levelUp", "/io/github/berinamajdancic/sounds/levelUpSound.wav");
+        loadSound("death", "/io/github/berinamajdancic/sounds/deathSound.wav");
+        loadSound("backgroundMusic", "/io/github/berinamajdancic/sounds/background.mp3");
+        loadSound("shoot", "/io/github/berinamajdancic/sounds/shootSound.wav");
+        loadSound("achievemnt", "/io/github/berinamajdancic/sounds/achievementSound.wav");
+
     }
 
     public void playLevelUpSound() {
-        System.err.println("playing sound");
+        System.out.println("playing sound");
         playSound("levelUp");
+    }
+
+    public void playBackgroundMusic() {
+        System.out.println("playing sound");
+        playSound("backgroundMusic");
+    }
+
+    public void playShootSound() {
+        playSound("shoot");
     }
 
     public void dispose() {

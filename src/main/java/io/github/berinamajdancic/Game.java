@@ -37,18 +37,20 @@ public class Game {
     private Label scoreLabel;
     private ProgressBar healthBar;
     private boolean isGameOver = false;
-    private static final String BACKGROUND_PATH =
-            "/io/github/berinamajdancic/images/stars_background.jpg";
+    private final SoundManager soundManager;
+    private static final String BACKGROUND_PATH = "/io/github/berinamajdancic/images/stars_background.jpg";
 
-    public Game(Stage stage, App app, DatabaseManager databaseManager) throws IOException {
+    public Game(Stage stage, App app, DatabaseManager databaseManager, SoundManager soundManager) throws IOException {
         this.stage = stage;
         this.app = app;
+        this.soundManager = soundManager;
         root = new StackPane();
         gameWorld = new Pane();
         hud = new Pane();
         root.getChildren().addAll(gameWorld, hud);
-        gameController = new GameController(stage, this, databaseManager);
+        gameController = new GameController(stage, this, databaseManager, soundManager);
         setupGame();
+
     }
 
     public Parent getGameRoot() {

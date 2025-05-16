@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import io.github.berinamajdancic.Game;
+import io.github.berinamajdancic.SoundManager;
 import io.github.berinamajdancic.db.DatabaseManager;
 import io.github.berinamajdancic.entities.Enemy;
 import io.github.berinamajdancic.entities.Player;
@@ -25,10 +26,11 @@ public class GameController {
     private double lastUpdateTime = 0;
     private boolean isGamePaused = false;
     private boolean gameIsRunning = true;
+    private SoundManager soundManager;
     private ArrayList<Enemy> enemies;
     private final Set<KeyCode> activeKeys = new HashSet<>();
 
-    public GameController(Stage stage, Game game, DatabaseManager databaseManager)
+    public GameController(Stage stage, Game game, DatabaseManager databaseManager, SoundManager soundManager)
             throws IOException {
         player = new Player(this);
         enemies = new ArrayList<>();
@@ -38,6 +40,7 @@ public class GameController {
         this.stage = stage;
         this.game = game;
         this.databaseManager = databaseManager;
+        this.soundManager = soundManager;
         setupGame();
         startEnemyBehavior();
         startCollisionThread();
@@ -80,8 +83,10 @@ public class GameController {
             Enemy enemy = enemies.get(i);
             if (enemy.isDead()) {
                 player.addScore(100);
+                soundManager.playShootSound();
                 if (player.getScore() % 1000 == 0) {
                     enemies.add(new Enemy());
+
                 }
                 enemy.removeEnemy();
                 Game.getGameWorld().getChildren().remove(enemy.getShipView());
@@ -234,6 +239,10 @@ public class GameController {
     public void gameOver() {
         game.pauseGame();
         databaseManager.saveScore(player.getScore());
+    }
+
+    public void playLevelUpSound() {
+        soundManager.playLevelUpSound();
     }
 
 }
