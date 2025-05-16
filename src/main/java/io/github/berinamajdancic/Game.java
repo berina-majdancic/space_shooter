@@ -38,9 +38,11 @@ public class Game {
     private ProgressBar healthBar;
     private boolean isGameOver = false;
     private final SoundManager soundManager;
-    private static final String BACKGROUND_PATH = "/io/github/berinamajdancic/images/stars_background.jpg";
+    private static final String BACKGROUND_PATH =
+            "/io/github/berinamajdancic/images/stars_background.jpg";
 
-    public Game(Stage stage, App app, DatabaseManager databaseManager, SoundManager soundManager) throws IOException {
+    public Game(Stage stage, App app, DatabaseManager databaseManager, SoundManager soundManager)
+            throws IOException {
         this.stage = stage;
         this.app = app;
         this.soundManager = soundManager;
@@ -159,8 +161,8 @@ public class Game {
 
         Label gameOverLabel = new Label("Game Over");
         gameOverLabel.getStyleClass().add("game-over-label");
-        gameOverLabel.setTranslateX(stage.getScene().getWidth() / 2 - 100);
-        gameOverLabel.setTranslateY(stage.getScene().getHeight() / 2 - 50);
+        gameOverLabel.setTranslateX(stage.getScene().getWidth() / 2 - 150);
+        gameOverLabel.setTranslateY(stage.getScene().getHeight() / 2 - 100);
         hud.getChildren().add(gameOverLabel);
 
         Button restartButton = new Button("Restart");

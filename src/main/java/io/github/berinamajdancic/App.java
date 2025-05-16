@@ -37,6 +37,8 @@ public class App extends Application {
         primaryStage.show();
         MenuController.setApp(this);
         MenuController.setDataBaseManager(databaseManager);
+        scene.getStylesheets().add(
+                getClass().getResource("/io/github/berinamajdancic/ui/menu.css").toExternalForm());
     }
 
     public void showMainMenu() throws IOException {

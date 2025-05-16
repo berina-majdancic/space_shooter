@@ -8,8 +8,8 @@
     -fx-font-weight: bold;
     -fx-text-fill: #ffffff;
 }
-.game-over-label
-{
+
+.game-over-label {
     -fx-font-family: "Silkscreen", sans-serif;
     -fx-font-size: 50px;
     -fx-font-weight: bold;
@@ -38,12 +38,11 @@
     -fx-min-height: 60px;
     -fx-alignment: center;
     -fx-cursor: hand;
+    -fx-view-order: -1;
 }
 
 .button:hover {
     -fx-font-size: 27px;
-    -fx-translate-x: -2px;
-    -fx-translate-y: -2px;
 }
 
 .game-header {
@@ -100,40 +99,42 @@ PasswordField:focused {
     -fx-max-width: 750px;
 }
 
-.table-view .column-header  {
-    -fx-background-color: transparent; 
-    -fx-border-color: transparent; 
-    -fx-padding: 10px; 
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 10px;
     -fx-background-radius: 10px;
     -fx-alignment: center;
 }
 
 .table-view .column-header-background {
     -fx-background-color: rgba(0, 0, 0, 0);
-    -fx-border-color: rgba(255, 255, 255, 0.5); 
-    -fx-border-width: 0 0 2px 0; 
+    -fx-border-color: rgba(255, 255, 255, 0.5);
+    -fx-border-width: 0 0 2px 0;
 }
+
 .table-view .column-header .label {
     -fx-font-size: 20px;
-    -fx-alignment: center; 
+    -fx-alignment: center;
 }
+
 .table-view .table-row-cell {
-    -fx-background-color: transparent; 
-    -fx-text-fill: white; 
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
 }
 
 .table-view .table-row-cell:odd {
-    -fx-background-color: rgba(255, 255, 255, 0.0);  
-    -fx-text-fill: white; 
+    -fx-background-color: rgba(255, 255, 255, 0.0);
+    -fx-text-fill: white;
 }
 
 .table-view .table-row-cell:even {
-    -fx-background-color: rgba(255, 255, 255, 0.0); 
-    -fx-text-fill: white; 
+    -fx-background-color: rgba(255, 255, 255, 0.0);
+    -fx-text-fill: white;
 }
 
 .table-view .table-cell {
-    -fx-background-color: transparent; 
-    -fx-text-fill: white; 
-    -fx-alignment: CENTER; 
-} 
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-alignment: CENTER;
+}
