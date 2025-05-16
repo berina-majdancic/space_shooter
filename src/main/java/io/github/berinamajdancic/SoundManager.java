@@ -8,7 +8,6 @@ import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 
 public class SoundManager {
-    private double volume = 1.0;
     private final Map<String, MediaPlayer> soundPlayers = new HashMap<>();
 
     public SoundManager() {
@@ -16,7 +15,7 @@ public class SoundManager {
         playBackgroundMusic();
     }
 
-    private void loadSound(String id, String filePath) {
+    private void loadSound(String id, String filePath, double volume) {
         try {
             Media sound = new Media(getClass().getResource(filePath).toString());
             MediaPlayer player = new MediaPlayer(sound);
@@ -36,11 +35,13 @@ public class SoundManager {
     }
 
     private void loadAllSounds() {
-        loadSound("levelUp", "/io/github/berinamajdancic/sounds/levelUpSound.wav");
-        loadSound("death", "/io/github/berinamajdancic/sounds/deathSound.wav");
-        loadSound("backgroundMusic", "/io/github/berinamajdancic/sounds/background.mp3");
-        loadSound("shoot", "/io/github/berinamajdancic/sounds/shootSound.wav");
-        loadSound("achievemnt", "/io/github/berinamajdancic/sounds/achievementSound.wav");
+        loadSound("startGameSound", "/io/github/berinamajdancic/sounds/startGameSound.wav", 1.0);
+        loadSound("death", "/io/github/berinamajdancic/sounds/deathSound.wav", 1.0);
+        loadSound("backgroundMusic", "/io/github/berinamajdancic/sounds/background.mp3", 0.2);
+        loadSound("kill", "/io/github/berinamajdancic/sounds/killSound.wav", 1.0);
+        loadSound("achievement", "/io/github/berinamajdancic/sounds/achievementSound.wav", 1.0);
+        loadSound("loseLifeSound", "/io/github/berinamajdancic/sounds/loseLifeSound.wav", 1.0);
+
 
     }
 
@@ -51,11 +52,25 @@ public class SoundManager {
 
     public void playBackgroundMusic() {
         System.out.println("playing sound");
+        soundPlayers.get("backgroundMusic").setCycleCount(MediaPlayer.INDEFINITE);
         playSound("backgroundMusic");
     }
 
-    public void playShootSound() {
-        playSound("shoot");
+    public void playKillSound() {
+        playSound("kill");
+    }
+
+    public void playDeathSound() {
+        playSound("death");
+
+    }
+
+    public void playAchievementSound() {
+        playSound("achievement");
+    }
+
+    public void playLoseLifeSound() {
+        playSound("loseLifeSound");
     }
 
     public void dispose() {

@@ -30,9 +30,10 @@ public class GameController {
     private ArrayList<Enemy> enemies;
     private final Set<KeyCode> activeKeys = new HashSet<>();
 
-    public GameController(Stage stage, Game game, DatabaseManager databaseManager, SoundManager soundManager)
-            throws IOException {
-        player = new Player(this);
+    public GameController(Stage stage, Game game, DatabaseManager databaseManager,
+            SoundManager soundManager) throws IOException {
+        player = new Player(this, stage.getScene().getWidth() / 2,
+                stage.getScene().getHeight() - 200, soundManager);
         enemies = new ArrayList<>();
         enemies.add(new Enemy());
         enemies.add(new Enemy());
@@ -83,10 +84,8 @@ public class GameController {
             Enemy enemy = enemies.get(i);
             if (enemy.isDead()) {
                 player.addScore(100);
-                soundManager.playShootSound();
                 if (player.getScore() % 1000 == 0) {
                     enemies.add(new Enemy());
-
                 }
                 enemy.removeEnemy();
                 Game.getGameWorld().getChildren().remove(enemy.getShipView());
@@ -101,6 +100,7 @@ public class GameController {
                 enemies.remove(i);
                 i--;
                 enemies.add(new Enemy());
+                soundManager.playLoseLifeSound();
             }
         }
 
@@ -170,10 +170,7 @@ public class GameController {
                         updateHealth(player.getHealth(), player.getMaxHealth());
                     });
                     projectile.setOutOfBounds(true);
-                    if (enemy.isDead() || enemy.isOutOfBounds()) {
-                        enemies.remove(i);
-                        i--;
-                    }
+
                 }
             }
         }
@@ -184,6 +181,8 @@ public class GameController {
         game.updateHealthBar(health, maxHealth);
         if (player.isDead()) {
             System.err.println("dead");
+            isGamePaused = true;
+            soundManager.playDeathSound();
             databaseManager.saveScore(player.getScore());
             game.showGameOverScreen();
         }
@@ -241,8 +240,5 @@ public class GameController {
         databaseManager.saveScore(player.getScore());
     }
 
-    public void playLevelUpSound() {
-        soundManager.playLevelUpSound();
-    }
 
 }
