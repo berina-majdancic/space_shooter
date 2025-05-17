@@ -140,12 +140,10 @@ public class Player {
     public void addScore(int score) {
         this.score += score;
         soundManager.playKillSound();
-        if (this.score % 500 == 0) {
-            health = Math.min(maxHealth, health + 50);
-        }
+        health = Math.min(maxHealth, health + 25);
         if (this.score % powerUpTreshold == 0) {
-            fireRate = Math.max(50_000_000, fireRate - 20_000_000);
-            powerUpTreshold = Math.min(powerUpTreshold * 2, 6000);
+            fireRate = Math.max(10_000_000, fireRate - 20_000_000);
+            powerUpTreshold = Math.min(powerUpTreshold * 2, 4000);
             soundManager.playAchievementSound();
         }
         gameController.updateScore(this.score);
@@ -162,9 +160,4 @@ public class Player {
     public int getMaxHealth() {
         return maxHealth;
     }
-
-    private void die() {
-        gameController.gameOver();
-    }
-
 }
