@@ -22,19 +22,13 @@ public class Enemy {
     private long lastMoveTime = 0;
     private final ArrayList<Projectile> projectiles;
     private final double shipCenter = width / 2 - 7;
-    private double maxSpawnPosition;
 
-    public Enemy() {
-        maxSpawnPosition = Game.getGameWorld().getWidth() - width;
-        randomizePosition();
+    public Enemy(double x, double y) {
+        this.x = x;
+        this.y = y;
         setupImageView();
         projectiles = new ArrayList<>();
         Game.getGameWorld().getChildren().add(shipView);
-    }
-
-    private void randomizePosition() {
-        x = Math.random() * maxSpawnPosition;
-        y = Math.random() * -300;
     }
 
     public boolean isDead() {
@@ -106,10 +100,8 @@ public class Enemy {
     public void shoot() {
         long currentTime = System.nanoTime();
         if ((currentTime - lastShotTime) >= fireRate * 3) {
-            Projectile projectile2 =
-                    new Projectile(x + shipCenter + 8, y + height, 30, 150, -150, true);
-            Projectile projectile3 =
-                    new Projectile(x + shipCenter - 8, y + height, 30, -150, -150, true);
+            Projectile projectile2 = new Projectile(x + shipCenter + 8, y + height, 30, 150, -150, true);
+            Projectile projectile3 = new Projectile(x + shipCenter - 8, y + height, 30, -150, -150, true);
 
             projectiles.add(projectile2);
             projectiles.add(projectile3);

@@ -24,8 +24,8 @@ public class Player {
     private final int maxHealth = 1000;
     private final GameController gameController;
     private boolean isDead = false;
-    private ArrayList<Projectile> projectiles;
-    private SoundManager soundManager;
+    private final ArrayList<Projectile> projectiles;
+    private final SoundManager soundManager;
 
     public Player(GameController gameController, double x, double y, SoundManager soundManager) {
         this.gameController = gameController;
@@ -47,8 +47,7 @@ public class Player {
     }
 
     private void setupImageView() {
-        InputStream inputStream =
-                getClass().getResourceAsStream("/io/github/berinamajdancic/images/ship.png");
+        InputStream inputStream = getClass().getResourceAsStream("/io/github/berinamajdancic/images/ship.png");
         shipImage = new Image(inputStream);
         shipView = new ImageView(shipImage);
         shipView.setFitWidth(width);

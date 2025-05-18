@@ -21,34 +21,30 @@ public class GameController {
     private final Player player;
     private final Stage stage;
     private final DatabaseManager databaseManager;
+    private final Set<KeyCode> activeKeys = new HashSet<>();
+    private final SoundManager soundManager;
+    private final ArrayList<Enemy> enemies;
     private final double movementSpeed = 300;
     private static double deltaTime = 0;
     private double lastUpdateTime = 0;
     private boolean isGamePaused = false;
     private boolean gameIsRunning = true;
-    private SoundManager soundManager;
-    private ArrayList<Enemy> enemies;
-    private final Set<KeyCode> activeKeys = new HashSet<>();
 
     public GameController(Stage stage, Game game, DatabaseManager databaseManager,
             SoundManager soundManager) throws IOException {
-        player = new Player(this, stage.getScene().getWidth() / 2,
-                stage.getScene().getHeight() - 200, soundManager);
-        enemies = new ArrayList<>();
-        enemies.add(new Enemy());
-        enemies.add(new Enemy());
-        enemies.add(new Enemy());
-        this.stage = stage;
         this.game = game;
         this.databaseManager = databaseManager;
         this.soundManager = soundManager;
+        this.stage = stage;
+        player = new Player(this, stage.getScene().getWidth() / 2,
+                stage.getScene().getHeight() - 200, soundManager);
+        enemies = new ArrayList<>();
+        enemies.add(spawnEnemy());
+        enemies.add(spawnEnemy());
+        enemies.add(spawnEnemy());
         setupGame();
         startEnemyBehavior();
         startCollisionThread();
-    }
-
-    public DatabaseManager getDatabaseManager() {
-        return databaseManager;
     }
 
     public boolean isGamePaused() {
@@ -78,20 +74,25 @@ public class GameController {
         }
     }
 
+    public void gameOver() {
+        game.pauseGame();
+        databaseManager.saveScore(player.getScore());
+    }
+
     private void updateEnemies() {
 
         for (int i = 0; i < enemies.size(); i++) {
             Enemy enemy = enemies.get(i);
             if (enemy.isDead()) {
                 player.addScore(100);
-                if (player.getScore() % 1000 == 0) {
-                    enemies.add(new Enemy());
+                if (player.getScore() % 1000 == 0 && player.getScore() < 17000) {
+                    enemies.add(spawnEnemy());
                 }
                 enemy.removeEnemy();
                 Game.getGameWorld().getChildren().remove(enemy.getShipView());
                 enemies.remove(i);
                 i--;
-                enemies.add(new Enemy());
+                enemies.add(spawnEnemy());
             } else if (enemy.isOutOfBounds()) {
                 player.takeDamage(300);
                 updateHealth(player.getHealth(), player.getMaxHealth());
@@ -99,7 +100,7 @@ public class GameController {
                 Game.getGameWorld().getChildren().remove(enemy.getShipView());
                 enemies.remove(i);
                 i--;
-                enemies.add(new Enemy());
+                enemies.add(spawnEnemy());
                 soundManager.playLoseLifeSound();
             }
         }
@@ -140,6 +141,7 @@ public class GameController {
         long currentTime = System.nanoTime();
         deltaTime = (currentTime - lastUpdateTime) / 1_000_000_000.0;
         lastUpdateTime = currentTime;
+        deltaTime = Math.min(deltaTime, 0.1);
     }
 
     public static double getDeltaTime() {
@@ -175,21 +177,6 @@ public class GameController {
             }
         }
 
-    }
-
-    public void updateHealth(double health, double maxHealth) {
-        game.updateHealthBar(health, maxHealth);
-        if (player.isDead()) {
-            System.err.println("dead");
-            isGamePaused = true;
-            soundManager.playDeathSound();
-            databaseManager.saveScore(player.getScore());
-            game.showGameOverScreen();
-        }
-    }
-
-    public void updateScore(int score) {
-        game.updateScore(score);
     }
 
     private void startCollisionThread() {
@@ -235,10 +222,24 @@ public class GameController {
         thread.start();
     }
 
-    public void gameOver() {
-        game.pauseGame();
-        databaseManager.saveScore(player.getScore());
+    private Enemy spawnEnemy() {
+        double x = Math.random() * stage.getScene().getWidth() - 100;
+        double y = Math.random() * -300;
+        return new Enemy(x, y);
     }
 
+    public void updateHealth(double health, double maxHealth) {
+        game.updateHealthBar(health, maxHealth);
+        if (player.isDead()) {
+            System.err.println("dead");
+            isGamePaused = true;
+            soundManager.playDeathSound();
+            databaseManager.saveScore(player.getScore());
+            game.showGameOverScreen();
+        }
+    }
 
+    public void updateScore(int score) {
+        game.updateScore(score);
+    }
 }
