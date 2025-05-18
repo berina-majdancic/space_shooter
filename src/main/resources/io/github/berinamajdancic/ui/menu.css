@@ -96,7 +96,7 @@ PasswordField:focused {
     -fx-border-style: none;
     -fx-background-radius: 10px;
     -fx-padding: 10px;
-    -fx-max-width: 750px;
+    -fx-max-width: 780px;
 }
 
 .table-view .column-header {

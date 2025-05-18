@@ -17,7 +17,7 @@
       <VBox alignment="CENTER" spacing="20.0" styleClass="table-container">
          <children>
             <Label styleClass="game-header" text="SPACE_SHOOTER" />
-            <TableView fx:id="leaderboardTable" prefWidth="750" prefHeight="400">
+            <TableView fx:id="leaderboardTable" prefWidth="800" prefHeight="400">
                <columns>
                    <TableColumn styleClass="table-column" fx:id="rankColumn" text="Rank" prefWidth="100" />
                    <TableColumn styleClass="table-column" fx:id="usernameColumn" text="Username" prefWidth="250" />
