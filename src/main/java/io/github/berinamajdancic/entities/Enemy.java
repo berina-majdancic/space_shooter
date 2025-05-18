@@ -100,8 +100,10 @@ public class Enemy {
     public void shoot() {
         long currentTime = System.nanoTime();
         if ((currentTime - lastShotTime) >= fireRate * 3) {
-            Projectile projectile2 = new Projectile(x + shipCenter + 8, y + height, 30, 150, -150, true);
-            Projectile projectile3 = new Projectile(x + shipCenter - 8, y + height, 30, -150, -150, true);
+            Projectile projectile2 =
+                    new Projectile(x + shipCenter + 8, y + height, 50, 150, -150, true);
+            Projectile projectile3 =
+                    new Projectile(x + shipCenter - 8, y + height, 50, -150, -150, true);
 
             projectiles.add(projectile2);
             projectiles.add(projectile3);

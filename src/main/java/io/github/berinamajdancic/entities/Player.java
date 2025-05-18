@@ -47,7 +47,8 @@ public class Player {
     }
 
     private void setupImageView() {
-        InputStream inputStream = getClass().getResourceAsStream("/io/github/berinamajdancic/images/ship.png");
+        InputStream inputStream =
+                getClass().getResourceAsStream("/io/github/berinamajdancic/images/ship.png");
         shipImage = new Image(inputStream);
         shipView = new ImageView(shipImage);
         shipView.setFitWidth(width);
@@ -141,7 +142,7 @@ public class Player {
         soundManager.playKillSound();
         health = Math.min(maxHealth, health + 25);
         if (this.score % powerUpTreshold == 0) {
-            fireRate = Math.max(10_000_000, fireRate - 20_000_000);
+            fireRate = Math.max(25_000_000, fireRate - 20_000_000);
             powerUpTreshold = Math.min(powerUpTreshold * 2, 4000);
             soundManager.playAchievementSound();
         }
