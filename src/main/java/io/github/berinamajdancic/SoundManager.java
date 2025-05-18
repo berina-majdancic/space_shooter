@@ -45,13 +45,11 @@ public class SoundManager {
 
     }
 
-    public void playLevelUpSound() {
-        System.out.println("playing sound");
-        playSound("levelUp");
+    public void playStartGameSound() {
+        playSound("startGameSound");
     }
 
     public void playBackgroundMusic() {
-        System.out.println("playing sound");
         soundPlayers.get("backgroundMusic").setCycleCount(MediaPlayer.INDEFINITE);
         playSound("backgroundMusic");
     }
