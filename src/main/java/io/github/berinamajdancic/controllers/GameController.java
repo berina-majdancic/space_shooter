@@ -76,7 +76,7 @@ public class GameController {
 
     public void gameOver() {
         game.pauseGame();
-        databaseManager.saveScore(player.getScore());
+        saveScore();
     }
 
     private void updateEnemies() {
@@ -85,7 +85,7 @@ public class GameController {
             Enemy enemy = enemies.get(i);
             if (enemy.isDead()) {
                 player.addScore(100);
-                if (player.getScore() % 1000 == 0 && player.getScore() < 17000) {
+                if (player.getScore() % 1000 == 0 && player.getScore() < 20000) {
                     enemies.add(spawnEnemy());
                 }
                 enemy.removeEnemy();
@@ -93,8 +93,9 @@ public class GameController {
                 enemies.remove(i);
                 i--;
                 enemies.add(spawnEnemy());
+                updateHealth(player.getHealth(), player.getMaxHealth());
             } else if (enemy.isOutOfBounds()) {
-                player.takeDamage(300);
+                player.takeDamage(200);
                 updateHealth(player.getHealth(), player.getMaxHealth());
                 enemy.removeEnemy();
                 Game.getGameWorld().getChildren().remove(enemy.getShipView());
@@ -223,7 +224,7 @@ public class GameController {
     }
 
     private Enemy spawnEnemy() {
-        double x = Math.random() * stage.getScene().getWidth() - 100;
+        double x = Math.random() * (stage.getScene().getWidth() - 100);
         double y = Math.random() * -300;
         return new Enemy(x, y);
     }
@@ -231,15 +232,18 @@ public class GameController {
     public void updateHealth(double health, double maxHealth) {
         game.updateHealthBar(health, maxHealth);
         if (player.isDead()) {
-            System.err.println("dead");
             isGamePaused = true;
             soundManager.playDeathSound();
-            databaseManager.saveScore(player.getScore());
+            saveScore();
             game.showGameOverScreen();
         }
     }
 
     public void updateScore(int score) {
         game.updateScore(score);
+    }
+
+    public void saveScore() {
+        databaseManager.saveScore(player.getScore());
     }
 }

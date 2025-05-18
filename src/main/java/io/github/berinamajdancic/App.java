@@ -71,9 +71,11 @@ public class App extends Application {
     }
 
     public void startGame() throws IOException {
+        if (game != null)
+            game.saveScore();
         game = new Game(primaryStage, this, databaseManager, soundManager);
         game.start();
-        soundManager.playLevelUpSound();
+        soundManager.playStartGameSound();
     }
 
     public void showPauseMenu() throws IOException {
@@ -103,7 +105,15 @@ public class App extends Application {
         game.resumeGame();
     }
 
+    public void saveScore() {
+        game.saveScore();
+    }
+
     public static void main(String[] args) {
+        System.setProperty("prism.forceGPU", "true");
+        System.setProperty("prism.order", "d3d,sw");
+
+        System.setProperty("prism.vsync", "false");
         launch();
     }
 

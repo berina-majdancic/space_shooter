@@ -37,7 +37,8 @@ public class Game {
     private Label scoreLabel;
     private ProgressBar healthBar;
     private boolean isGameOver = false;
-    private static final String BACKGROUND_PATH = "/io/github/berinamajdancic/images/stars_background.jpg";
+    private static final String BACKGROUND_PATH =
+            "/io/github/berinamajdancic/images/stars_background.jpg";
 
     public Game(Stage stage, App app, DatabaseManager databaseManager, SoundManager soundManager)
             throws IOException {
@@ -148,7 +149,6 @@ public class Game {
     public void showGameOverScreen() {
         if (isGameOver)
             return;
-        System.err.println("gameover");
         isGameOver = true;
         Rectangle overlay = new Rectangle();
         overlay.setWidth(stage.getScene().getWidth());
@@ -168,7 +168,6 @@ public class Game {
         restartButton.setTranslateY(stage.getScene().getHeight() / 2 + 10);
 
         restartButton.setOnAction(e -> {
-            System.err.println("Restarting game...");
             deleteGame();
             restartGame();
         });
@@ -181,5 +180,9 @@ public class Game {
 
     public void updateHealthBar(double health, double maxHealth) {
         healthBar.setProgress(health / maxHealth);
+    }
+
+    public void saveScore() {
+        gameController.saveScore();
     }
 }

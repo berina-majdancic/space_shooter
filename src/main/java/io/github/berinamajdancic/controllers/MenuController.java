@@ -78,6 +78,7 @@ public class MenuController {
     @FXML
     private void showMainMenu() throws IOException {
         app.showMainMenu();
+        app.saveScore();
     }
 
     @FXML
